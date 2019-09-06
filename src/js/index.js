@@ -1,14 +1,13 @@
 import _ from "lodash";
 import message from "./message";
 import "../styles/index.scss";
-import braintree from 'braintree';
 
 (async() => {
 
 	var button = document.querySelector("#submit-button");
 	
       const { token } = await fetch(
-        "http://localhost:5000/client_token"
+        "http://localhost:5000/api/payment/client_token"
       ).then(res => res.json());
       braintree.dropin.create(
         {
@@ -25,7 +24,7 @@ import braintree from 'braintree';
                 Accept: "application/json",
                 "Content-Type": "application/json"
               };
-              fetch("http://localhost:5000/checkout", {
+              fetch("http://localhost:5000/api/payment/checkout", {
                 method: "POST",
                 body: JSON.stringify(params),
                 headers,
@@ -36,3 +35,10 @@ import braintree from 'braintree';
         }
       );
 })();
+
+ if (module.hot) {
+     module.hot.accept('./message.js', function() {
+       console.log('Accepting the updated printMe module!');
+       message();
+     });
+   }

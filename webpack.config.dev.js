@@ -11,7 +11,6 @@ module.exports = merge(baseConfig, {
   mode: "development",
   entry: {
     buildDev: [
-      "webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000",
       "@babel/polyfill",
       "./src/js/index.js"
     ]

@@ -25,7 +25,7 @@ module.exports = (env, argv) => {
       __filename: false, // and __filename return blank or /
       fs: false
     },
-    externals: [nodeExternals(), "fs"], // Need this to avoid error when working with Express
+    externals: [nodeExternals()], // Need this to avoid error when working with Express
     module: {
       rules: [
         {
