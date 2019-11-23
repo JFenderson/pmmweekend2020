@@ -1,0 +1,577 @@
+@import "variables";
+// @import "landing";
+
+.wrapper {
+  overflow: hidden;
+}
+.landing {
+  text-align: center;
+  color: $secondaryColor;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("../assets/middle_of_field_M.jpg");
+  background-color: rgba(66, 14, 66, 0.699);
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  font-family: "Quicksand", sans-serif;
+  background-position: center center;
+  -webkit-background-size: cover !important;
+  -moz-background-size: cover !important;
+  -o-background-size: cover !important;
+  image-rendering: optimizeQuality;
+  height: auto;
+  background-attachment: fixed;
+  overflow: hidden;
+  // // background-color: rgba(66, 14, 66, 0.699);
+  // background-repeat: no-repeat;
+  // background-size: 100%;
+  // image-rendering: optimizeQuality;
+  // background-attachment: fixed;
+  // overflow: hidden;
+  // max-height: 100%;
+  // max-width: 100%;
+  // height: 100vh;
+}
+
+//navbar starts
+.navbar-default {
+  background-color: transparent;
+  box-shadow: none;
+  line-height: 10px;
+  height: 3em;
+  width: 100%;
+  // line-height: 25px;
+  button {
+    color: $primaryColor;
+  }
+
+  .fas {
+    color: $primaryColor;
+  }
+}
+
+.sidenav {
+  width: 17em;
+}
+
+.sideNavLinks {
+  border-bottom: 1px solid #522888;
+}
+.hero-nav {
+  position: relative;
+  height: 3em;
+  transition: 0.5s ease;
+}
+
+.hero-nav a {
+  color: white;
+  width: 7em;
+  /* height: 3em; */
+  transition: 0.3s ease;
+}
+
+.photo-link {
+  display: none;
+}
+
+.hero-nav a:hover {
+  background-color: #ffffff;
+  color: rgb(230, 191, 22);
+  border-radius: 10px;
+  padding: 15px 10px;
+}
+
+.sticky {
+  position: fixed;
+  height: 3.5em;
+  background-color: rgba(0, 0, 0, 0.4);
+  width: 100%;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  border-top: 0;
+  transition: 0.5s ease;
+  animation: smoothScroll 1s forwards;
+}
+@keyframes smoothScroll {
+  0% {
+    transform: translateY(-40px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.sticky a:hover {
+  width: 9em;
+  /* height: 3em; */
+  background-color: #ffffff;
+  border-radius: 10px;
+  color: rgb(230, 191, 22);
+  padding: 15px 10px;
+}
+// #bar {
+//   font-size: 3em;
+//   line-height: 1em;
+// }
+// .navbar-nav{
+
+//   > li {
+//     margin-right: 6em;
+
+//     > a {
+//       color: white;
+//       margin: 10px 5px 5px 5px;
+
+//     }
+//     > a:hover, > a:active, > a:focus {
+//       color: #C57ED3;
+//     }
+//     > a:visited {
+//       color: white;
+//       text-decoration: none;
+//     }
+
+//   } //end li
+//   > .active {
+
+//     > a, > a:hover, > a:focus {
+//       background-color: transparent;
+//       color: $fontColor;
+//     }
+
+//   }
+// }
+// .bar-sticky{
+//   position: fixed;
+//   z-index: 100;
+// }
+
+// .navbar-solid{
+//   position: fixed;
+//   z-index: 100;
+//   width: 100%;
+//   top: 0;
+//   left: 0;
+//   border-top: 0;
+//   animation: smoothScroll 1s forwards;
+//   background-color: $primaryColor;
+//   transition: background-color 1s ease 0s;
+//   box-shadow: 0 0 4px grey;
+// }
+
+// .navbar-fixed {
+//   position: absolute;
+//   z-index:999999999;
+
+//     > li {
+
+//        > a {
+//          color: $secondaryColor;
+//          transition: color 1s ease 0s;
+//        }
+
+//     } //end li
+
+//  //end .navbar-nav
+
+// }
+
+// .link {
+//   display: inline-block;
+//   position: relative;
+//   text-decoration: none;
+//   padding: 10px 0;
+//   color: #fff;
+// }
+
+// .link-wrapper {
+//   position: relative;
+//   display: block;
+//   padding: 20px 0;
+// }
+
+// .hover-10 {
+//   &:before {
+//       content: '';
+//       position: absolute;
+//       top: 0;
+//       right: 0;
+//       width: 100%;
+//       height: 3px;
+//       background-color: $primaryColor;
+//       transform: scaleX(0);
+
+//       transition: transform 0.3s;
+//   }
+
+//   &:after {
+//       content: '';
+//       position: absolute;
+//       bottom: 0;
+//       right: 0;
+//       width: 100%;
+//       height: 3px;
+//       background-color: $primaryColor;
+//       transform: scaleX(0);
+
+//       transition: transform 0.3s;
+//   }
+
+//   &:hover {
+//   &:before,
+//       &:after {
+//           transform: scaleX(1);
+//       }
+//   }
+// }
+
+// @keyframes smoothScroll {
+//   0% {
+//     transform: translateY(-40px);
+//   }
+//   100% {
+//     transform: translateY(0px);
+//   }
+// }
+
+// // end of navbar
+/* start countdown styling */
+
+ul#countdown {
+  position: relative;
+  top: 50%;
+  // transform: translateY(-50%);
+  // width: 75%;
+  // margin: 0 auto;
+  // margin: 6em 2em 0em;
+  padding: 20px;
+  color: #fff;
+  border: 1px solid #f9f7f5;
+  border-width: 1px 0;
+  overflow: hidden;
+  font-family: "Arial Narrow", Arial, sans-serif;
+  font-weight: bold;
+}
+
+#seconds .number {
+  color: rgb(230, 191, 22);
+}
+
+ul#countdown li {
+  // margin: 0 -3px 0 0;
+  margin: 9px;
+  padding: 0;
+  display: inline-block;
+  // width: 25%;
+  font-size: 9vh;
+  text-align: center;
+}
+
+.label {
+  color: #ffffff;
+  font-size: 18px;
+  font-size: 2.5vw;
+  text-transform: uppercase;
+  font-family: "Comfortaa", cursive;
+}
+
+/* end countdown */
+
+/* start landing title */
+.landing-top-title {
+  padding-top: 1em;
+  font-size: 4rem;
+  color: $fontColor;
+}
+.landing-sub-title {
+  font-size: 20px;
+  text-align: center;
+  color: $secondaryColor;
+}
+.title-page {
+  text-align: center;
+  color: $secondaryColor;
+  span {
+    font-size: 2.2em;
+  }
+}
+.title-page > .col:nth-child(2){
+  margin-right: 15%;
+}
+.title-content {
+  padding-top: 10em;
+  width: 100%;
+}
+.btn-col{
+  width: 100%;
+}
+.event-btn{
+  background-color: $primaryColor;
+  margin-bottom: 8em;
+}
+/* end landing title */
+//about
+#about{
+  width: 95%;
+}
+.about {
+  background-color: rgba(230, 191, 22, 0.3);
+  color: $fontColor;
+  border-radius: 10px;
+}
+.about>h3{
+  font-size: 2.5rem;
+}
+.about>p{
+  font-size: 17px;
+}
+//end about
+//dirty 30
+.dirty {
+  text-align: center;
+  background: linear-gradient(rgba(72, 4, 117, 0.5), rgba(72, 4, 117, 0.5)),
+    url("../assets/12111988_10156244784765226_2600407094435778015_n.jpg");
+  background-color: rgba(66, 14, 66, 0.699);
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  font-family: "Quicksand", sans-serif;
+  background-position: center center;
+  -webkit-background-size: cover !important;
+  -moz-background-size: cover !important;
+  -o-background-size: cover !important;
+  image-rendering: optimizeQuality;
+  background-attachment: fixed;
+  overflow: hidden;
+}
+.dirty > p {
+  font-size: 1.5em;
+}
+//end dirty 30
+//schedule
+.card .card-content {
+    padding: 2px;
+    border-radius: 0 0 2px 2px;
+    text-align: center;
+    width: 98%;
+    border-radius: 5px;
+}
+.card-content > h3 {
+  font-size: 2em;
+  text-align: center;
+}
+.card-container {
+  background-color: $primaryColor;
+  color: $fontColor;
+  height: 55vh;
+}
+.card-container > div > ul > li > h4 {
+  color: $secondaryColor;
+}
+.card-container > div > ul > li > p {
+  font-size: 1.7em;
+}
+.tabs {
+  border-radius: 5px;
+}
+.tabs .tab a {
+  color: $primaryColor;
+} /*Black color to the text*/
+
+.tabs .tab a:hover {
+  background-color: #eee;
+  color: $primaryColor;
+} /*Text color on hover*/
+
+.tabs .tab a.active {
+  background-color: $primaryColor;
+  color: $fontColor;
+} /*Background and text color when a tab is active*/
+
+.tabs .indicator {
+  background-color: $secondaryColor;
+} /*Color of underline*/
+.tabs .tab a:focus, .tabs .tab a:focus.active {
+    background-color: rgba(82,40,136, 0.4);
+    outline: none;
+}/*Color of focus*/
+//end schdule
+//start dirty 30
+
+//end dirty 30
+//start registration
+.pricing > div > h4 {
+  text-align: center;
+}
+.pricing-col{
+  width: 100%;
+  text-align: center;
+}
+.pricing-card{
+  height: auto;
+}
+.pricing-card > p {
+  margin: 0px;
+}
+.pricing-card > p:nth-child(1){
+  font-weight: 600;
+  font-size: 2.3rem;
+}
+.pricing-card > p:nth-child(2){
+  font-size: 1.2rem;
+}
+.pricing-card > h3{
+  font-weight: 500;
+  font-size: 2.5rem;
+}
+.pricing-card > ul {
+  font-size: 2rem;
+}
+.pricing-card > li {
+  line-height: 1em;
+}
+.pricing-btn{
+  background-color: $primaryColor;
+  color: $secondaryColor;
+  border-radius: 15px;
+}
+.pricing-btn:hover {
+  background-color: #eee;
+  color: $primaryColor;
+} /*Text color on hover*/
+.select-wrapper input.select-dropdown:focus {
+    border-bottom: 1px solid $primaryColor;
+}
+.dropdown-content li>span>label {
+  color: $primaryColor;
+}
+[type="checkbox"]:checked+span:not(.lever):before {
+    border-right: 2px solid $primaryColor;
+    border-bottom: 2px solid $primaryColor;
+}
+.hotel-info{
+  text-align: center;
+  width: 100%;
+}
+.hotel-info .card-panel > p {
+  font-size: 20px;
+}
+.activity-info > h4{
+  text-align: center;
+}
+.activity-info > p {
+  font-size: 1.4em;
+  text-align: center;
+}
+.collection a.collection-item{
+  color: $primaryColor;
+  font-size: 1.7rem;
+}
+.activity-info .collection .collection-item:hover{
+  background-color: $primaryColor;
+  color: $fontColor;
+}
+.activity-info .collection a.collection-item:active{
+  background-color: $primaryColor;
+  color: $fontColor;
+}
+.payment > h4 {
+  text-align: center;
+}
+.payment > p {
+  font-size: 1.4em;
+  text-align: center;
+}
+.payment li.collection-item{
+  font-size: 1.5em;
+}
+//end registration
+//start PMM WEEKEND 2019
+
+// end PMM WEEKEND 2019
+
+// start contact
+  #contact{
+    background-color: $primaryColor;
+    color: $fontColor;
+  }
+  .contact-box{
+    color: $fontColor;
+    width: 100%;
+    text-align: center;
+  }
+  .contact-box > ul {
+    padding: 2em;
+  }
+  .contact-box > ul > li{
+    font-size: 1.4em;
+  }
+  .contact-box > ul > li > i{
+    font-size: 1.5em;
+    color: $secondaryColor;
+  }
+  .contact-box > ul > li > p{
+    font-size: 0.8em;
+    line-height: 10px;
+  }
+  .newsletter-container{
+    height: auto;
+    text-align: center;
+    width: 100%;
+    background-color: white;
+    color: black;
+  }
+  .newsletter-container > p{
+    font-size: 1.6em;
+  }
+  .newsletter-container > form{
+    margin: 2em;
+  }
+  .newsletter-container > form > .row > .col{
+    width: 100%;
+  }
+  .newsletter-container > form > .row > .col > .btn {
+    background-color: $primaryColor;
+    color: $fontColor;
+  }
+  .input-field > input:focus{
+    border-bottom: 1px solid $secondaryColor;
+    -webkit-box-shadow: 0 1px 0 0 $secondaryColor;
+    box-shadow: 0 1px 0 0 $secondaryColor;
+  }
+  .contact-container{
+    width: 100%;
+    text-align: center;
+  }
+  .contact-container > h3{
+    font-size: 1.6em;
+  }
+  .social-footer {
+    display: inline-flex;
+  }
+  .social-footer > li{
+    font-size: 2em;
+    margin-right: 1em;
+  }
+  .social-footer > li > a{
+    color: $fontColor;
+  }
+  .social-footer > li > a:hover{
+    color: $secondaryColor;
+  }
+  .devLink{
+    color: $fontColor;
+  }
+  .devLink{
+    color: $fontColor;
+  }
+  .devLink a:hover{
+    color: $secondaryColor;
+  }
+  .useful-links > li > p > a{
+    color: $fontColor;
+  }
+  .useful-links > li > p > a:hover{
+    color: $secondaryColor;
+  }
+
+// end contact

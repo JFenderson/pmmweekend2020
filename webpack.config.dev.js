@@ -4,16 +4,14 @@ const webpack = require("webpack");
 const merge = require("webpack-merge");
 const baseConfig = require("./webpack.config.base.js");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const ExtractTextWebpackPlugin = require("extract-text-webpack-plugin");
 // const CleanWebpackPlugin = require("clean-webpack-plugin");
 
 
 module.exports = merge(baseConfig, {
   mode: "development",
   entry: {
-    buildDev: [
-      "@babel/polyfill",
-      "./src/js/index.js"
-    ]
+    buildDev: ["@babel/polyfill", "./src/js/index.js"]
   },
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -32,43 +30,10 @@ module.exports = merge(baseConfig, {
   },
   module: {
     rules: [
-      {
-        // Look for Sass files and process them according to the
-        // rules specified in the different loaders
-        test: /\.(sa|sc)ss$/,
-        // Use the following loaders from right-to-left, so it will
-        // use sass-loader first and ending with MiniCssExtractPlugin
-        use: [
-          {
-            // Extracts the CSS into a separate file and uses the
-            // defined configurations in the 'plugins' section
-            loader: MiniCssExtractPlugin.loader
-          },
-          {
-            // Interprets CSS
-            loader: "css-loader",
-            options: {
-              importLoaders: 2
-            }
-          },
-          {
-            // Use PostCSS to minify and autoprefix. This loader
-            // uses the configuration in `postcss.config.js`
-            loader: "postcss-loader",
-            options: {
-              plugins: function() {
-                // post css plugins, can be exported to postcss.config.js
-                return [require("precss"), require("autoprefixer")];
-              }
-            }
-          },
-          {
-            // Adds support for Sass files, if using Less, then
-            // use the less-loader
-            loader: "sass-loader"
-          }
-        ]
-      },
+      // {
+      //   test: /\.(sa|sc|c)ss$/,
+      //   use: ["style-loader", "css-loader", "sass-loader"]
+      // },
       {
         test: /\.css$/,
         use: [
@@ -77,6 +42,23 @@ module.exports = merge(baseConfig, {
           },
           "css-loader"
         ]
+      },
+      {
+        test: /\.(scss|sass|css)$/,
+        use: [
+          // MiniCssExtractPlugin.loader,
+          "style-loader",
+          { loader: "css-loader", options: { url: true, sourceMap: true } },
+          { loader: "sass-loader", options: { url: true, sourceMap: true } }
+        ]
+      },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/,
+        loader: "file-loader",
+        // options: {
+        //   emitFile: false
+        // }
+        // options: { outputPath: "/" }
       }
     ]
   },
@@ -85,7 +67,34 @@ module.exports = merge(baseConfig, {
       title: "development",
       template: "./src/html/index.html",
       //   excludeChunks: ["buildDev"],
-      inject: true
+      inject: "head"
+    }),
+    new HtmlWebpackPlugin({
+      template: "./src/html/pmmweekend19.html",
+      filename: './pmmweekend19.html',
+      //   excludeChunks: ["buildDev"],
+      inject: "head"
+    }),
+    new HtmlWebpackPlugin({
+      inject: "head",
+      template: './src/html/legal/legal.html',
+      filename: './legal/legal.html',
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/html/legal/term.html',
+      filename: './legal/term.html',
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/html/legal/return.html',
+      filename: './legal/return.html',
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/html/legal/privatePolicy.html',
+      filename: './legal/privatePolicy.html',
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/html/legal/cookiesPolicy.html',
+      filename: './legal/cookiesPolicy.html',
     }),
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output

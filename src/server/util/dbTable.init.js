@@ -7,7 +7,7 @@ class Table {
         "You must pass a MySQL table name into the Table object constructor."
       );
     }
-    this.tableName = tableName;
+    // this.tableName = tableName;
   }
 
   getOne(id) {

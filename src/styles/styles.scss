@@ -1,0 +1,34 @@
+// @import "../vendor/materialize/css/materialize.min.css";
+@import "variables";
+// @import "./_legal.scss"
+
+@import "small-default";
+
+@media only screen and (min-width: 768px){
+    @import "medium";
+}
+
+@media only screen and (min-width: 1024px){
+    @import "large";
+}
+
+body, html{
+    scroll-behavior: smooth;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/*----------------------- Preloader -----------------------*/
+.hidden {
+    display: none;
+}
+
+.pageloader {
+position: fixed;
+left: 0px;
+top: 0px;
+width: 100%;
+height: 100%;
+z-index: 9999;
+background: url('../assets/Spinner-1s-200px.gif') 50% 50% no-repeat rgb(249, 249, 249);
+// opacity: .8;
+}

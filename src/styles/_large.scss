@@ -1,0 +1,92 @@
+nav ul {
+    margin: 0;
+}
+
+.navbar-nav > li > a:nth-child(4){
+   width: auto;
+}
+.navbar-nav{
+
+  > li {
+    margin-right: 6em;
+
+    > a {
+      margin: 10px 0px 5px 0px;
+
+    }
+    > a:hover, > a:active, > a:focus {
+      color: $secondaryColor;
+    }
+  } //end li
+}
+.hero-nav a {
+  height: 2.5em;
+}
+.sticky a:hover {
+    margin: 5px 5px;
+    padding: 10px 10px;
+}
+.landing-top-title {
+    font-size: 5rem;
+}
+.title-page span {
+    font-size: 2.7em;
+}
+.label{
+    font: 3vw;
+}
+ul#countdown li {
+    font-size: 11vh;
+}
+.about > h3 {
+    font-size: 2.5rem;
+}
+.about > p {
+    font-size: 1.5em;
+}
+
+.select-wrapper input.select-dropdown {
+    font-size: 1.5em;
+    text-align: center;
+}
+[type="checkbox"]+span:not(.lever) {
+    font-size: 1.4em;
+}
+#standBtn {
+    margin-top: 2.5em;
+}
+.card .card-content{
+    width: 95%;
+    margin: 0 auto;
+}
+.card-tabs{
+    margin: 0 auto;
+    width: 95%;
+}
+.hotel-info .card-panel > span {
+    font-size: 24px;
+}
+.activity-info > p {
+    font-size: 1.8em;
+}
+.collection .collection-item {
+    line-height: 2.5rem;
+}
+.collection a.collection-item {
+    font-size: 2.3rem;
+}
+.payment > p {
+    font-size: 1.7em;
+    margin-bottom: 6em;
+}
+.payment li.collection-item {
+    font-size: 2em;
+}
+.contact-box > ul {
+    display: table;
+}
+.contact-box > ul > li {
+    font-size: 2em;
+    display: table-cell;
+    width: 50%;
+}
