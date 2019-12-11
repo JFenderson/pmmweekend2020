@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node ./dist/server.js",
     "prestart": "npm run build:dev",
+    "lint": "eslint --fix src/server/routes",
     "clean": "rimraf dist",
     "nodemon": "nodemon --exec babel-node ./dist/server.js",
     "watch:backEnd": "webpack --watch --mode development --config webpack.config.server.js",
@@ -27,6 +28,7 @@
     "@babel/preset-env": "^7.5.5",
     "@babel/register": "^7.5.5",
     "autoprefixer": "^9.6.1",
+    "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
     "babel-watch": "^7.0.0",
     "chai": "^4.2.0",
@@ -34,6 +36,7 @@
     "css-loader": "^3.2.0",
     "eslint": "^6.1.0",
     "eslint-config-google": "^0.13.0",
+    "eslint-plugin-promise": "^4.2.1",
     "eslint-utils": ">=1.4.1",
     "exports-loader": "^0.7.0",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
@@ -88,6 +91,7 @@
     "popper.js": "^1.15.0",
     "rimraf": "^3.0.0",
     "sib-api-v3-sdk": "^7.1.4",
+    "stripe": "^7.13.1",
     "webpack": "^4.39.2",
     "webpack-merge": "^4.2.1",
     "zipcodes": "^8.0.0"

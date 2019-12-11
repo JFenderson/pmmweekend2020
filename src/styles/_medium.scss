@@ -8,8 +8,26 @@
 .about > p {
     font-size: 20px;
 }
+.select-wrapper input.select-dropdown {
+    font-size: 19px;
+}
+.dropdown-content li > span {
+    font-size: 18px;
+}
+input:not([type]), input[type=text]:not(.browser-default), input[type=password]:not(.browser-default), input[type=email]:not(.browser-default), input[type=url]:not(.browser-default), input[type=time]:not(.browser-default), input[type=date]:not(.browser-default), input[type=datetime]:not(.browser-default), input[type=datetime-local]:not(.browser-default), input[type=tel]:not(.browser-default), input[type=number]:not(.browser-default), input[type=search]:not(.browser-default), textarea.materialize-textarea {
+    font-size: 20px;
+}
 .pricing-card {
     height: 75vh;
+}
+.pricing-card > ul {
+  font-size: 1.7rem;
+}
+.pricing-card > p:nth-child(2) {
+    font-size: 1.7rem;
+}
+.pricing-card > p:nth-child(3){
+  font-size: 1.7rem;
 }
 #standBtn{
     margin-top: 5.7em;
@@ -25,3 +43,75 @@
     margin-left: 20%;
     margin-right: 20%;
 }
+/* starts photo gallery/slideshow */
+    .photo-gallery-area {
+        padding: 50px 0 125px;
+        height: 110vh;
+        font-family: 'Quicksand', sans-serif;
+        display: grid;
+    }
+    .photo-title h1 {
+        text-align: center;
+        font-size: 3em;
+    }
+    .photo-background{
+        background-color: black;
+        height: 90vh;
+    }
+
+    .photo-container {
+        margin: 0;
+        max-width: 100%;
+        margin:5vh auto 0 auto;
+      }
+      .mySlides {
+  display: none;
+}
+// img {
+//   vertical-align: middle;
+// }
+
+.mySlides > img {
+     width: 95vw;
+    height: 82vh;
+    margin: 2em;
+  border: solid 1px rgb(66, 14, 66);
+  border-radius: 3px;
+  box-shadow: 0 0 5px 0 hsla(0, 0%, 30%, 0.3);
+}
+
+/* Slideshow container */
+.slideshow-container {
+  max-width: 100%;
+  position: relative;
+  margin: 0 auto;
+}
+
+/* Fading animation */
+.fade {
+  -webkit-animation-name: fade;
+  -webkit-animation-duration: 1.5s;
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@-webkit-keyframes fade {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+
+      /* end photo gallery */

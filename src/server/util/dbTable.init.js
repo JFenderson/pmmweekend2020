@@ -7,17 +7,35 @@ class Table {
         "You must pass a MySQL table name into the Table object constructor."
       );
     }
-    // this.tableName = tableName;
+    this.tableName = tableName;
   }
 
   getOne(id) {
     let sql = `SELECT * FROM ${this.tableName} WHERE id = ${id};`;
-    return executeQuery(sql, [id]).then(results => results[0]);
+    return executeQuery(sql, [id])
+            .then(results => results[0])
+            .catch((err) => {
+              console.log(err)
+            })
   }
 
   getAll() {
     let sql = `SELECT * FROM ${this.tableName}`;
-    return executeQuery(sql);
+    return executeQuery(sql)
+      .then(results => results)
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  findOne(fname, lname) {
+    let sql = `SELECT first_name, last_name FROM ${this.tableName} WHERE first_name = "${fname}" && last_name = "${lname}"`
+      return executeQuery(sql, [fname,lname])
+      .then(results => results[0])
+      .catch(err => {
+        console.log(err);
+      });
+    
   }
 
   find(query) {
@@ -29,7 +47,11 @@ class Table {
     let sql = `SELECT * FROM ${this.tableName} WHERE ${conditions.join(
       " AND "
     )};`;
-    return executeQuery(sql, values);
+    return executeQuery(sql, values)
+      .then(results => results)
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   insert(row) {
@@ -39,9 +61,13 @@ class Table {
     let sql = `INSERT INTO ${this.tableName} (${columns.join(
       ","
     )}) VALUES (${placeholderString});`;
-    return executeQuery(sql, values).then(results => ({
+    return executeQuery(sql, values)
+    .then(results => ({
       id: results.insertId
-    }));
+    }))
+    .catch(err => {
+      console.log(err)
+    })
   }
 
   update(id, row) {
@@ -53,12 +79,20 @@ class Table {
     let sql = `UPDATE ${this.tableName} SET ${updates.join(
       ","
     )} WHERE id = ${id};`;
-    return executeQuery(sql, values);
+    return executeQuery(sql, values)
+      .then(results => results)
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   delete(id) {
     let sql = `DELETE FROM ${this.tableName} WHERE id = ${id}`;
-    return executeQuery(sql);
+    return executeQuery(sql)
+      .then(results => results)
+      .catch(err => {
+        console.log(err);
+      });
   }
 }
 

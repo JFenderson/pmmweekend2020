@@ -126,7 +126,7 @@
       <h3>Schedule of Events</h3>
     </div>
     <div class="card-content card-container ">
-      <div id="thurs-event">
+      <!-- <div id="thurs-event">
         <ul>
           <li>
             <h4>Karaoke Party</h4>
@@ -144,7 +144,7 @@
             </p>
           </li>
         </ul>
-      </div>
+      </div> -->
       <div id="fri-event">
         <ul>
           <li>
@@ -202,9 +202,9 @@
     </div>
     <div class="card-tabs">
       <ul class="tabs tabs-fixed-width">
-        <li class="tab">
+        <!-- <li class="tab">
           <a href="#thurs-event">THURSDAY </a>
-        </li>
+        </li> -->
         <li class="tab">
           <a href="#fri-event">FRIDAY</a>
         </li>
@@ -221,99 +221,77 @@
   <!-- START REGISTRATION -->
   <div class="content pricing" id="registration">
     <h4>Registration</h4>
-  </div>
   <div class="row">
     <div class="col s12 m6 pricing-col">
       <div class="card-panel pricing-card">
         <p>One Standalone Ticket</p>
         <p>Want to Attend one event</p>
-        <h6>Pricing Below:</h6>
+        <p>Pricing Below:</p>
         <div class="input-field col s12">
-          <select id="event-select">
+          <select multiple id="purchase">
             <option value="" disabled>Choose your Event</option>
-            <option value="pmmkaraoke">Thursday: Karaoke Party/Meet & Greet - $15</option>
-            <option value="pmmblackparty">Friday: All Black Party - $20</option>
-            <option value="pmmpicnic">Saturday: PMM Picnic - $10</option>
-            <option value="pmmbrunch">Sunday: PMM Sunday Brunch - $10</option>
+            <!-- <option value="pmmkaraoke" name="PMM Karaoke Party">Thursday: Karaoke Party/Meet & Greet - $15</option> -->
+            <option value="pmmblackparty" name="PMM All Black Party">Friday: All Black Party - $10</option>
+            <option value="pmmpicnic" name="PMM Picnic">Saturday: PMM Picnic - $10</option>
+            <option value="chld" name="PMM Picnic Child Ticket">Children Tickets - $5</option>
+            <option value="pmmbrunch" name="PMM Weekend SUnday Brunch">Sunday: PMM Sunday Brunch - $10</option>
+            <option value="space" name="PMM Picnic Tent Space">Tent Space - $100</option>
           </select>
         </div>
-        <button id="standBtn" class="snipcart-add-item waves-effect waves-light btn-large pricing-btn"
-          data-item-id="pmmkaraoke" 
-          data-item-price="15.00" 
-          data-item-url="/"
-          data-item-description="PMM Weekend Karaoke Tickets" 
-          data-item-name="PMM Weekend Karaoke Tickets">
-          purchase</button>
-        <button id="standBtn" style="display: none" class="snipcart-add-item waves-effect waves-light btn-large pricing-btn"
-          data-item-id="pmmblackparty" 
-          data-item-price="20.00" 
-          data-item-url="/"
-          data-item-description="PMM Weekend All Black Party Tickets" 
-          data-item-name="PMM Weekend All Black Party Tickets">
-          purchase</button>
-        <button id="standBtn" style="display: none" class="snipcart-add-item waves-effect waves-light btn-large pricing-btn"
-          data-item-id="pmmpicnic" 
-          data-item-price="10.00" 
-          data-item-url="/"
-          data-item-description="PMM Weekend Picnic Tickets" 
-          data-item-name="PMM Weekend Picnic Tickets">
-          purchase</button>
-        <button id="standBtn" style="display: none" class="snipcart-add-item waves-effect waves-light btn-large pricing-btn"
-          data-item-id="pmmbrunch" 
-          data-item-price="10.00" 
-          data-item-url="/"
-          data-item-description="PMM Weekend Sunday Brunch Tickets" 
-          data-item-name="PMM Weekend Sunday Brunch Tickets">
-          purchase</button>
-        <button class="snipcart-checkout waves-effect waves-light btn-large pricing-btn">Checkout</button>
+        <div class="input-field col s12">
+          <select aria-label="tickets" name="tickets" id="numberOfTickets">
+            <option disabled value="0">Quantity of Tickets</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <button id="ticketBtn" class="waves-effect waves-light btn-large pricing-btn">
+          purchase
+        </button>
       </div>
     </div>
     <div class="col s12 m6 pricing-col">
-      <div class="card-panel pricing-card">
+      <div class="card-panel pricing-card bundle">
         <p>All Weekend Pass</p>
         <p>Here for the turn up</p>
-        <h3>$40</h3>
+        <h3>$30</h3>
         <ul>
           <li>Cheaper Price</li>
-          <li>Access to all events(wristbands)</li>
+          <li>Access to all events(Laminated Passes)</li>
+          <li>Eligible for Weekend bundle merch</li>
         </ul>
-        <button id="allAccessBtn" class="snipcart-add-item waves-effect waves-light btn-large pricing-btn"
-          data-item-id="2" data-item-price="40.00" data-item-url="/"
-          data-item-description="All Access Weekend Passes for PMM Weekend 2020"
-          data-item-name="PMM Weekend All Access Pass">Add to cart</button>
-        <button class="snipcart-checkout waves-effect waves-light btn-large pricing-btn">Checkout</button>
-      </div>
-    </div>
-    <div class="col s12 m12 pricing-col">
-      <div class="card-panel pricing-card">
-        <p>VIP Access Pass</p>
-        <p>Here for the Full Effect</p>
-        <h3>$100</h3>
-        <ul>
-          <li>Eligible for the PMM Weekend Bundle Deal</li>
-          <li>
-            Access Passes to all the VIP Section at the events(no wristband
-            neccessary)
-          </li>
-          <li>Promo Gift(Limited Time)</li>
-        </ul>
-        <button id="vipBtn" class="snipcart-add-item waves-effect waves-light btn-large pricing-btn"
-          data-item-id="pmm003" data-item-price="100.00" data-item-url="/"
-          data-item-description="VIP Access Weekend Passes for PMM Weekend 2020"
-          data-item-name="PMM Weekend VIP Access Pass">purchase</button>
-        <button class="snipcart-checkout waves-effect waves-light btn-large pricing-btn">Checkout</button>
-
+        <select class="hidden bundle-select" id="purchase">
+          <option class="hidden" selected value="bundle"></option>
+        </select>
+        <div class="input-field col s12">
+          <select aria-label="tickets" name="tickets" id="numberOfBundleTickets">
+            <option disabled value="0">Quantity of Tickets</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <button id="ticketBundleBtn" class="snipcart-add-item waves-effect waves-light btn-large pricing-btn">
+          purchase
+        </button>
       </div>
     </div>
     <div class="col hotel-info">
       <div class="card-panel">
         <h4>Hotel</h4>
-        <p>This year we wanted to provide more accessibility for our out of towner PMM Family. That is why we have
-          prepare two rooming blocks this year. click
-          <a href="https://www.druryhotels.com/bookandstay/newreservation/?groupno=2396441">here</a> to book your room
-          at the Drury Inn in Homewood, AL</p>
-        <p>To book at the Marriott Courtyard Hotel in Homewood, AL click <a
-            href="https://www.marriott.com/events/start.mi?id=1573847291473&key=GRP">here</a></p>
+        <p>
+          This year we wanted to provide more accessibility for our out of
+          towner PMM Family. That is why we have prepare two rooming blocks
+          this year. </p>
+        <p>click<a href="https://www.druryhotels.com/bookandstay/newreservation/?groupno=2396441"> here </a>to book your room at the Drury Inn in Homewood, AL.</p>
+        <p>To book at the Marriott Courtyard Hotel in Homewood, AL click
+          <a href="https://www.marriott.com/events/start.mi?id=1573847291473&key=GRP">here.</a>
+        </p>
       </div>
     </div>
     <div class="col l6 activity-info">
@@ -326,7 +304,8 @@
       <div class="collection">
         <a target="_blank"
           href="https://docs.google.com/forms/d/e/1FAIpQLSfY1Am5BX-wJfASidtIYyXvliGnlTqhqDPAf6gkaSPtbVG7oA/viewform?usp=sf_link"
-          class="collection-item"> Stroll-Off</a>
+          class="collection-item">
+          Stroll-Off</a>
         <a target="_blank"
           href="https://docs.google.com/forms/d/e/1FAIpQLSfJyBfdprn682c3Rt8A4q3-VNwPaXkI0BoZv7-bDyLSVU2Shw/viewform?usp=sf_link"
           class="collection-item">March-Off</a>
@@ -345,17 +324,63 @@
         <li target="_blank" class="collection-item"><a href="">Paypal</a></li>
         <li class="collection-item">Cashapp: $PMMWeekend</li>
         <li class="collection-item">
-          Through the site: payments processed through <a href="https://www.stripe.com">Stripe</a>
+          Through the site: payments processed through
+          <a href="https://www.stripe.com">Stripe</a>
         </li>
       </ul>
     </div>
   </div>
   </div>
-  <div class="photos">
-    <!-- <button id="photos">photos</button> -->
-    <img alt="" id="firebaseImg">
+  <div class="photo-gallery-area block" id="photo-gallery">
+    <a name="photo-gallery"></a>
+    <div class="container photo-title">
+      <h1>PMM Weekend 2019</h1>
+    </div>
+    <div class="photo-background">
+      <div class="slide-container">
+
+    </div>
+   
+    </div>
   </div>
   <!-- END REGISTRATION -->
+  <!-- Band Member sign up start -->
+  <div class="band-member-area block" id="member-sign-up">
+    <a name="member-sign-up"></a>
+    <div class="container">
+      <h3 class="title-member">PMM Booster Club Signup</h3>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          <div class="member-left">
+            <p>
+              Are you a current or previous member of the Purple Marching
+              Machine? Are you someone that simply want to assist in
+              progessing the Purple Marching Machine into new heights? if so,
+              please fill out our form to be added to the PMM Booster Club
+              directory and stay inform with all matters.
+            </p>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          <div class="member-form">
+            <input aria-label="memberName" type="text" name="memberName" placeholder="Name" id="memberName" required />
+            <input aria-label="memberEmail" type="text" name="memberEmail" placeholder="Email Address" id="memberEmail"
+              required />
+            <input aria-label="memberNumber" type="tel" name="memberNumber" placeholder="Phone Number" id="memberNumber"
+              pattern="[1-9]{1}[0-9]{9}" maxlength="10" required />
+            <input aria-label="memberLocation" type="text" pattern="[0-9]*" name="memberLocation"
+              placeholder="Location(Zip Code)" id="memberLocation" required />
+            <input aria-label="memberConfirm" type="text" name="memberConfirm" placeholder="Did you march in PMM?"
+              id="memberConfirm" required />
+            <input aria-label="memberSubmit" class="memberBtn" id="memberSubmit" type="submit" value="Sign Up" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Band Member sign up end -->
   <!-- STARTS ABOUT DIRTY 30 -->
   <!-- <div class="dirty" id="dirty30">
                   <h4>About "Dirty 30"</h4>
@@ -393,13 +418,13 @@
         <form class="text-center">
           <div class="row">
             <div class="input-field col">
-              <input type="text" type="name" name="name" id="name" placeholder="Name" />
+              <input type="text" type="name" name="name" id="contactName" placeholder="Name" />
             </div>
             <div class="input-field col">
-              <input type="text" type="email" name="email" id="email" placeholder="Your e-mail" />
+              <input type="text" type="email" name="email" id="contactEmail" placeholder="Your e-mail" />
             </div>
             <div class="col">
-              <button class="waves-effect waves-light btn">Subscribe</button>
+              <input class="waves-effect waves-light btn memberBtn" type="submit" value="Subscribe" id="contactSubmit">
             </div>
           </div>
         </form>
@@ -452,8 +477,12 @@
         </div>
         <div class="col s12 m12 l12">
           <div class="container">
-            <p><a class="devLink" href="./legal/legal.html">Terms and Conditions</a></p>
-            <p>Developer by <a class="devLink" href="https://www.github.com/JFenderson">Joseph Fenderson</a>
+            <p>
+              <a class="devLink" href="./legal/legal.html">Terms and Conditions</a>
+            </p>
+            <p>
+              Developer by
+              <a class="devLink" href="https://www.github.com/JFenderson">Joseph Fenderson</a>
             </p>
           </div>
         </div>
@@ -469,24 +498,16 @@
         crossorigin="anonymous"></script> -->
   <!-- <script src="../../dist/app.bundle.js"></script> -->
   <div class="pageloader"></div>
-  <div hidden id="snipcart" data-api-key="ZTc5NmI3YTItOTVlYi00ZDdiLWE0OGMtZjcxNDc1ODIzYmRiNjM2OTY0Mjg2MzYxMDE5MDE2">
-  </div>
-  <script src="http://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.snipcart.com/themes/v3.0.3/default/snipcart.js"></script>
-  <script src="https://cdn.snipcart.com/scripts/2.0/snipcart.js" id="snipcart"
-      data-api-key="ZTc5NmI3YTItOTVlYi00ZDdiLWE0OGMtZjcxNDc1ODIzYmRiNjM2OTY0Mjg2MzYxMDE5MDE2"></script>
-  <script>
-      Snipcart.api
-          .configure("excluded_shipping_methods", [""])
-          .configure("show_cart_automatically", false);
-  </script>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script src="https://checkout.stripe.com/checkout.js"></script>
   <noscript>
-    <style>
-      body {
-        visibility: visible;
-      }
-    </style>
+    For full functionality of this site it is necessary to enable JavaScript.
+    Here are the
+    <a href="https://www.enable-javascript.com/" target="_blank">
+      instructions how to enable JavaScript in your web browser</a>.
   </noscript>
 </body>
 

@@ -1,402 +1,1462 @@
-import { Router } from 'express';
-import stripeLoader from 'stripe';
-import { transporter } from '../config/nodemailer';
-import dotenv from 'dotenv';
+/* eslint-disable no-unused-vars */
+import { Router } from "express";
+import stripeLoader from "stripe";
+import Table from "../util/dbTable.init";
+// import { transporter } from '../config/nodemailer';
+import dotenv from "dotenv";
 dotenv.config();
 
 let router = Router();
-const stripe = stripeLoader(process.env.STRIPE_SK);
+let events = new Table("events");
+const stripe = stripeLoader(process.env.STRIPE_TEST_SECRETKEY);
+//---------------------------------------------------------------
 
-//1 INDIVIDUAL TICKET 10.00
-router.post('/tickets/idv/1', (req, res) => {
-	let token = req.body.id;
-	let email = req.body.email;
-	let name = req.body.card.name;
+//---------------------------------------------------------------
 
-	return stripe.customers.create({
-		source: token,
-		email: email,
-	}).then((customer) => {
-		stripe.charges.create({
-			amount: 1000,
-			currency: 'usd',
-			description: 'For PMM Weekend - 1 ticket',
-			customer: customer.id,
-			receipt_email: customer.email,
-		});
-	}).then((charge) => {
-		res.send(charge);
-		//SENDING email
-		let mailOption = {
-			from: 'fenderson.joseph@gmail.com',
-			to: `${name} <${email}>`,
-			subject: 'PMM Weekend Purchase',
-			text: 'Thank you for you Payment..See you at PMM Weekend!'
-		};
-
-		transporter.sendMail(mailOption, (error, res) => {
-			if (error) {
-				return new Error(error);
-			} else {
-				res.sendStatus(201).send(`email sent to ${email}!`);
-			}
-			transporter.close();
-		});
-	})
-		.catch(function onError(error) {
-			if (error.status === 400) {
-				res.send({ error: 'Bad request, often due to missing a required parameter.' });
-			} else if (error.status === 401) {
-				res.send({ error: 'No valid API key provided.' });
-			} else if (error.status === 404) {
-				res.send({ error: 'The requested resource doesn\'t exist.' });
-			} else if (error.status === 500) {
-				res.send({ error: 'Purchase Failed' });
-			}
-		});
-
+router.get("/events", (req, res) => {
+  events
+    .getAll()
+    .then(event => {
+      return res.json(event);
+    })
+    .catch(err => {
+      return res.sendStatus(400).json(err);
+    });
 });
 
-//2 INDIVIDUAL TICKET 20.00
-router.post('/tickets/idv/2', (req, res) => {
-	let token = req.body.id;
-	let email = req.body.email;
-	let name = req.body.card.name;
+//PMM KARAOKE PARTY
+router.post("/tickets/pmmticketpayment", (req, res) => {
+  let token = req.body.token.id;
+  let email = req.body.token.email;
+  let name = req.body.token.card.name;
+  let tixType = req.body.ticketType;
+  let tixQuanity = req.body.ticketQuanity;
+  let eventType = req.body.eventName;
+  let pmmTotal = req.body.pmmTotal;
 
-	return stripe.customers.create({
-		source: token,
-		email: email,
-	}).then((customer) => {
-		stripe.charges.create({
-			amount: 2000,
-			currency: 'usd',
-			description: 'For PMM Weekend - 2 tickets',
-			customer: customer.id,
-			receipt_email: customer.email,
-		});
-	}).then((charge) => {
-		res.send(charge);
-		//SENDING email
-		let mailOption = {
-			from: 'fenderson.joseph@gmail.com',
-			to: `${name} <${email}>`,
-			subject: 'PMM Weekend Purchase',
-			text: 'Thank you for you Payment..See you at PMM Weekend!'
-		};
+  console.log(req.body);
+  console.log(tixType);
+  console.log(parseInt(tixQuanity));
+  console.log(eventType);
 
-		transporter.sendMail(mailOption, (error, res) => {
-			if (error) {
-				return new Error(error);
-			} else {
-				res.sendStatus(201).send(`email sent to ${email}!`);
-			}
-			transporter.close();
-		});
-	})
-		.catch(function onError(error) {
-			if (error.status === 400) {
-				res.send({ error: 'Bad request, often due to missing a required parameter.' });
-			} else if (error.status === 401) {
-				res.send({ error: 'No valid API key provided.' });
-			} else if (error.status === 404) {
-				res.send({ error: 'The requested resource doesn\'t exist.' });
-			} else if (error.status === 500) {
-				res.send({ error: 'Purchase Failed' });
-			}
-		});
+  return stripe.customers
+    .create({
+      source: token,
+      email: email
+    })
+    .then(customer => {
+      stripe.charges.create({
+        amount: `${pmmTotal}`,
+        currency: "usd",
+        description: `PMM Weekend 2020 - ${tixType} with ${tixQuanity} `,
+        customer: customer.id,
+        receipt_email: customer.email
+      });
+    })
+    .then(charge => {
+      res.send(charge);
+
+      events
+        .insert({
+          name: name,
+          email: email,
+          event_type: eventType,
+          amount: pmmTotal
+        })
+        .then(member => {
+          return res.status(201).send(member);
+        })
+        .catch(err => {
+          return res.status(400).send(err, 400);
+        });
+
+      // //SENDING email
+      // let mailOption = {
+      // 	from: 'fenderson.joseph@gmail.com',
+      // 	to: `${name} <${email}>`,
+      // 	subject: 'PMM Weekend Purchase',
+      // 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+      // };
+
+      // transporter.sendMail(mailOption, (error, res) => {
+      // 	if (error) {
+      // 		return new Error(error);
+      // 	} else {
+      // 		res.sendStatus(201).send(`email sent to ${email}!`);
+      // 	}
+      // 	transporter.close();
+      // });
+    })
+    .catch(function onError(error) {
+      if (error.status === 400) {
+        res.send({
+          error: "Bad request, often due to missing a required parameter."
+        });
+      } else if (error.status === 401) {
+        res.send({ error: "No valid API key provided." });
+      } else if (error.status === 404) {
+        res.send({ error: "The requested resource doesn't exist." });
+      } else if (error.status === 500) {
+        res.send({ error: "Purchase Failed" });
+      }
+    });
 });
+// router.post('/tickets/pmmkaraoke/2', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
 
-//3 INDIVIDUAL TICKET 30.00
-router.post('/tickets/idv/3', (req, res) => {
-	let token = req.body.id;
-	let email = req.body.email;
-	let name = req.body.card.name;
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
 
-	return stripe.customers.create({
-		source: token,
-		email: email,
-	}).then((customer) => {
-		stripe.charges.create({
-			amount: 3000,
-			currency: 'usd',
-			description: 'For PMM Weekend - 3 tickets',
-			customer: customer.id,
-			receipt_email: customer.email,
-		});
-	}).then((charge) => {
-		res.send(charge);
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/pmmkaraoke/3', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
 
-		let mailOption = {
-			from: 'fenderson.joseph@gmail.com',
-			to: `${name} <${email}>`,
-			subject: 'PMM Weekend Purchase',
-			text: 'Thank you for you Payment..See you at PMM Weekend!'
-		};
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
 
-		transporter.sendMail(mailOption, (error, res) => {
-			if (error) {
-				return new Error(error);
-			} else {
-				res.sendStatus(201).send(`email sent to ${email}!`);
-			}
-			transporter.close();
-		});
-	})
-		.catch(function onError(error) {
-			if (error.status === 400) {
-				res.send({ error: 'Bad request, often due to missing a required parameter.' });
-			} else if (error.status === 401) {
-				res.send({ error: 'No valid API key provided.' });
-			} else if (error.status === 404) {
-				res.send({ error: 'The requested resource doesn\'t exist.' });
-			} else if (error.status === 500) {
-				res.send({ error: 'Purchase Failed' });
-			}
-		});
-});
-//4 INDIVIDUAL TICKET 40.00
-router.post('/tickets/idv/4', (req, res) => {
-	let token = req.body.id;
-	let email = req.body.email;
-	let name = req.body.card.name;
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/pmmkaraoke/4', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
 
-	return stripe.customers.create({
-		source: token,
-		email: email,
-	}).then((customer) => {
-		stripe.charges.create({
-			amount: 4000,
-			currency: 'usd',
-			description: 'For PMM Weekend - 4 tickets',
-			customer: customer.id,
-			receipt_email: customer.email,
-		});
-	}).then((charge) => {
-		res.send(charge);
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
 
-		let mailOption = {
-			from: 'fenderson.joseph@gmail.com',
-			to: `${name} <${email}>`,
-			subject: 'PMM Weekend Purchase',
-			text: 'Thank you for you Payment..See you at PMM Weekend!'
-		};
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/pmmkaraoke/5', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
 
-		transporter.sendMail(mailOption, (error, res) => {
-			if (error) {
-				return new Error(error);
-			} else {
-				res.sendStatus(201).send(`email sent to ${email}!`);
-			}
-			transporter.close();
-		});
-	})
-		.catch(function onError(error) {
-			if (error.status === 400) {
-				res.send({ error: 'Bad request, often due to missing a required parameter.' });
-			} else if (error.status === 401) {
-				res.send({ error: 'No valid API key provided.' });
-			} else if (error.status === 404) {
-				res.send({ error: 'The requested resource doesn\'t exist.' });
-			} else if (error.status === 500) {
-				res.send({ error: 'Purchase Failed' });
-			}
-		});
-});
-//5 INDIVIDUAL TICKET 50.00
-router.post('/tickets/idv/5', (req, res) => {
-	let token = req.body.id;
-	let email = req.body.email;
-	let name = req.body.card.name;
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
 
-	return stripe.customers.create({
-		source: token,
-		email: email,
-	}).then((customer) => {
-		stripe.charges.create({
-			amount: 5000,
-			currency: 'usd',
-			description: 'For PMM Weekend - 5 tickets',
-			customer: customer.id,
-			receipt_email: customer.email,
-		});
-	}).then((charge) => {
-		res.send(charge);
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// //-----------------------------------------------------------------
 
-		let mailOption = {
-			from: 'fenderson.joseph@gmail.com',
-			to: `${name} <${email}>`,
-			subject: 'PMM Weekend Purchase',
-			text: 'Thank you for you Payment..See you at PMM Weekend!'
-		};
+// //PMM ALL BLACK PARTY
+// router.post('/tickets/pmmblackparty/1', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
 
-		transporter.sendMail(mailOption, (error, res) => {
-			if (error) {
-				return new Error(error);
-			} else {
-				res.sendStatus(201).send(`email sent to ${email}!`);
-			}
-			transporter.close();
-		});
-	})
-		.catch(function onError(error) {
-			if (error.status === 400) {
-				res.send({ error: 'Bad request, often due to missing a required parameter.' });
-			} else if (error.status === 401) {
-				res.send({ error: 'No valid API key provided.' });
-			} else if (error.status === 404) {
-				res.send({ error: 'The requested resource doesn\'t exist.' });
-			} else if (error.status === 500) {
-				res.send({ error: 'Purchase Failed' });
-			}
-		});
-});
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
 
-//TENT SPACE PURCHASE 1
-router.post('/tickets/tntsp/1', (req, res) => {
-	let token = req.body.id;
-	let email = req.body.email;
-	let name = req.body.card.name;
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/pmmblackparty/2', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
 
-	return stripe.customers.create({
-		source: token,
-		email: email,
-	}).then((customer) => {
-		stripe.charges.create({
-			amount: 12000,
-			currency: 'usd',
-			description: 'For PMM Weekend - 1 tent space',
-			customer: customer.id,
-			receipt_email: customer.email,
-		});
-	}).then((charge) => {
-		res.send(charge);
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
 
-		let mailOption = {
-			from: 'fenderson.joseph@gmail.com',
-			to: `${name} <${email}>`,
-			subject: 'PMM Weekend Purchase',
-			text: 'Thank you for you Payment..See you at PMM Weekend!'
-		};
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/pmmblackparty/3', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
 
-		transporter.sendMail(mailOption, (error, res) => {
-			if (error) {
-				return new Error(error);
-			} else {
-				res.sendStatus(201).send(`email sent to ${email}!`);
-			}
-			transporter.close();
-		});
-	})
-		.catch(function onError(error) {
-			if (error.status === 400) {
-				res.send({ error: 'Bad request, often due to missing a required parameter.' });
-			} else if (error.status === 401) {
-				res.send({ error: 'No valid API key provided.' });
-			} else if (error.status === 404) {
-				res.send({ error: 'The requested resource doesn\'t exist.' });
-			} else if (error.status === 500) {
-				res.send({ error: 'Purchase Failed' });
-			}
-		});
-});
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
 
-//TENT SPACE PURCHASE 2
-router.post('/tickets/tntsp/2', (req, res) => {
-	let token = req.body.id;
-	let email = req.body.email;
-	let name = req.body.card.name;
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/pmmblackparty/4', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
 
-	return stripe.customers.create({
-		source: token,
-		email: email,
-	}).then((customer) => {
-		stripe.charges.create({
-			amount: 24000,
-			currency: 'usd',
-			description: 'For PMM Weekend - 2 tent spaces',
-			customer: customer.id,
-			receipt_email: customer.email,
-		});
-	}).then((charge) => {
-		res.send(charge);
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
 
-		let mailOption = {
-			from: 'fenderson.joseph@gmail.com',
-			to: `${name} <${email}>`,
-			subject: 'PMM Weekend Purchase',
-			text: 'Thank you for you Payment..See you at PMM Weekend!'
-		};
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/pmmblackparty/5', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
 
-		transporter.sendMail(mailOption, (error, res) => {
-			if (error) {
-				return new Error(error);
-			} else {
-				res.sendStatus(201).send(`email sent to ${email}!`);
-			}
-			transporter.close();
-		});
-	})
-		.catch(function onError(error) {
-			if (error.status === 400) {
-				res.send({ error: 'Bad request, often due to missing a required parameter.' });
-			} else if (error.status === 401) {
-				res.send({ error: 'No valid API key provided.' });
-			} else if (error.status === 404) {
-				res.send({ error: 'The requested resource doesn\'t exist.' });
-			} else if (error.status === 500) {
-				res.send({ error: 'Purchase Failed' });
-			}
-		});
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
 
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// //-----------------------------------------------------------------
 
-});
+// //PMM PICNIC
+// router.post('/tickets/pmmpicnic/1', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
 
-//TENT SPACE PURCHASE 3
-router.post('/tickets/tntsp/3', (req, res) => {
-	let token = req.body.id;
-	let email = req.body.email;
-	let name = req.body.card.name;
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
 
-	return stripe.customers.create({
-		source: token,
-		email: email,
-	}).then((customer) => {
-		stripe.charges.create({
-			amount: 36000,
-			currency: 'usd',
-			description: 'For PMM Weekend - 3 tent spaces',
-			customer: customer.id,
-			receipt_email: customer.email,
-		});
-	}).then((charge) => {
-		res.send(charge);
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/pmmpicnic/2', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
 
-		let mailOption = {
-			from: 'fenderson.joseph@gmail.com',
-			to: `${name} <${email}>`,
-			subject: 'PMM Weekend Purchase',
-			text: 'Thank you for you Payment..See you at PMM Weekend!'
-		};
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
 
-		transporter.sendMail(mailOption, (error, res) => {
-			if (error) {
-				return new Error(error);
-			} else {
-				res.sendStatus(201).send(`email sent to ${email}!`);
-			}
-			transporter.close();
-		});
-	})
-		.catch(function onError(error) {
-			if (error.status === 400) {
-				res.send({ error: 'Bad request, often due to missing a required parameter.' });
-			} else if (error.status === 401) {
-				res.send({ error: 'No valid API key provided.' });
-			} else if (error.status === 404) {
-				res.send({ error: 'The requested resource doesn\'t exist.' });
-			} else if (error.status === 500) {
-				res.send({ error: 'Purchase Failed' });
-			}
-		});
-});
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/pmmpicnic/3', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
+
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
+
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/pmmpicnic/4', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
+
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
+
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/pmmpicnic/5', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
+
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
+
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// //-----------------------------------------------------------------
+// //PMM PICNIC
+// router.post('/tickets/pmmbrunch/1', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
+
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
+
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/pmmbrunch/2', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
+
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
+
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/pmmbrunch/3', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
+
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
+
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/pmmbrunch/4', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
+
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
+
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/pmmbrunch/5', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
+
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
+
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// //-----------------------------------------------------------------
+
+// //PMM CHILD
+// router.post('/tickets/chld/1', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
+
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
+
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/chld/2', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
+
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
+
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/chld/3', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
+
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
+
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// //-----------------------------------------------------------------
+
+// //PMM BUNDLE
+// router.post('/tickets/bundle/1', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
+
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
+
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/bundle/2', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
+
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
+
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// router.post('/tickets/bundle/3', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
+
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 1000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend Karaoke Party - 1 ticket',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+// 		// //SENDING email
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
+
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	}).catch(function onError(error) {
+// 		if (error.status === 400) {
+// 			res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 		} else if (error.status === 401) {
+// 			res.send({ error: 'No valid API key provided.' });
+// 		} else if (error.status === 404) {
+// 			res.send({ error: 'The requested resource doesn\'t exist.' });
+// 		} else if (error.status === 500) {
+// 			res.send({ error: 'Purchase Failed' });
+// 		}
+// 	});
+// });
+// //-----------------------------------------------------------------
+
+// //PMM TENT SPACE
+// router.post('/tickets/tntsp/1', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
+
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 12000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend - 1 tent space',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
+
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	})
+// 		.catch(function onError(error) {
+// 			if (error.status === 400) {
+// 				res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 			} else if (error.status === 401) {
+// 				res.send({ error: 'No valid API key provided.' });
+// 			} else if (error.status === 404) {
+// 				res.send({ error: 'The requested resource doesn\'t exist.' });
+// 			} else if (error.status === 500) {
+// 				res.send({ error: 'Purchase Failed' });
+// 			}
+// 		});
+// });
+// router.post('/tickets/tntsp/2', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
+
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 24000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend - 2 tent spaces',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
+
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	})
+// 		.catch(function onError(error) {
+// 			if (error.status === 400) {
+// 				res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 			} else if (error.status === 401) {
+// 				res.send({ error: 'No valid API key provided.' });
+// 			} else if (error.status === 404) {
+// 				res.send({ error: 'The requested resource doesn\'t exist.' });
+// 			} else if (error.status === 500) {
+// 				res.send({ error: 'Purchase Failed' });
+// 			}
+// 		});
+
+// });
+// router.post('/tickets/tntsp/3', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
+
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 36000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend - 3 tent spaces',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
+
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	})
+// 		.catch(function onError(error) {
+// 			if (error.status === 400) {
+// 				res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 			} else if (error.status === 401) {
+// 				res.send({ error: 'No valid API key provided.' });
+// 			} else if (error.status === 404) {
+// 				res.send({ error: 'The requested resource doesn\'t exist.' });
+// 			} else if (error.status === 500) {
+// 				res.send({ error: 'Purchase Failed' });
+// 			}
+// 		});
+// });
+
+// router.post('/tickets/pmmtotal', (req, res) => {
+// 	let token = req.body.id;
+// 	let email = req.body.email;
+// 	let name = req.body.card.name;
+
+// 	return stripe.customers.create({
+// 		source: token,
+// 		email: email,
+// 	}).then((customer) => {
+// 		stripe.charges.create({
+// 			amount: 36000,
+// 			currency: 'usd',
+// 			description: 'For PMM Weekend - 3 tent spaces',
+// 			customer: customer.id,
+// 			receipt_email: customer.email,
+// 		});
+// 	}).then((charge) => {
+// 		res.send(charge);
+
+// 		// let mailOption = {
+// 		// 	from: 'fenderson.joseph@gmail.com',
+// 		// 	to: `${name} <${email}>`,
+// 		// 	subject: 'PMM Weekend Purchase',
+// 		// 	text: 'Thank you for you Payment..See you at PMM Weekend!'
+// 		// };
+
+// 		// transporter.sendMail(mailOption, (error, res) => {
+// 		// 	if (error) {
+// 		// 		return new Error(error);
+// 		// 	} else {
+// 		// 		res.sendStatus(201).send(`email sent to ${email}!`);
+// 		// 	}
+// 		// 	transporter.close();
+// 		// });
+// 	})
+// 		.catch(function onError(error) {
+// 			if (error.status === 400) {
+// 				res.send({ error: 'Bad request, often due to missing a required parameter.' });
+// 			} else if (error.status === 401) {
+// 				res.send({ error: 'No valid API key provided.' });
+// 			} else if (error.status === 404) {
+// 				res.send({ error: 'The requested resource doesn\'t exist.' });
+// 			} else if (error.status === 500) {
+// 				res.send({ error: 'Purchase Failed' });
+// 			}
+// 		});
+// });
+
 export default router;

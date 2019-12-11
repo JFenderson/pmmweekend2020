@@ -1,40 +1,63 @@
 import { Router } from "express";
-import { transporter } from "../config/nodemailer";
+// import { transporter } from "../config/nodemailer";
 import dotenv from "dotenv";
+import SibApiV3Sdk from "sib-api-v3-sdk";
+import human from "humanparser";
+
 dotenv.config();
 
 let router = Router();
+let defaultClient = SibApiV3Sdk.ApiClient.instance;
+let apiKey = defaultClient.authentications["api-key"];
+apiKey.apiKey = process.env.SEND_IN_BLUE_V3;
+// Configure API key authorization: partner-key
+let partnerKey = defaultClient.authentications["partner-key"];
+partnerKey.apiKey = process.env.SEND_IN_BLUE_V2;
+
+var apiInstance = new SibApiV3Sdk.SMTPApi();
+
+var sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail(); // SendSmtpEmail | Values to send a transactional email
+
 
 router.get("/", (req, res) => {
   res.send('Server working. Please post at "/contact" to submit a message.');
 });
 
-router.post("/", req => {
+router.post("/signup", (req, res) => {
   const name = req.body.name;
   const email = req.body.email;
-  const message = req.body.message;
-  const mailOption = {
-    from: `${name} <${email}>`, // who the email is coming from..in the contact form
-    to: "joseph.fenderson@gmail.com", //who the email is going to
-    subject: `New Message from ${email} from the PMM Weekend Site`, //subject line
-    text: message,
-    html: `<div style="text-align: center; margin: auto; margin-right: auto 0; border: 1px solid; padding: 10px; width: 50%; height: auto;">
-        <h1>Hey PMM Admin,</h1> 
-        <h1>You have a new message from the PMM Weekend Site</h1>
-        <h2>From: ${name}</h2>
-        <h2>Message:</h2>
-        <h2>${message} </h2>
-      </div>`
+
+  let nameParse = human.parseName(name);
+
+
+  sendSmtpEmail = {
+    to: [
+      {
+        email: email,
+        name: name
+      }
+    ],
+    templateId: 4,
+    params: {
+      FIRSTNAME: nameParse.firstName,
+      LASTNAME: nameParse.lastName
+    },
+    headers: {
+      "X-Mailin-custom":
+        "custom_header_1:custom_value_1|custom_header_2:custom_value_2"
+    }
   };
 
-  transporter.sendMail(mailOption, (error, res) => {
-    if (error) {
-      return new Error(error);
-    } else {
-      res.sendStatus(201).send(`email sent to ${email}!`);
+  apiInstance.sendTransacEmail(sendSmtpEmail).then(
+    function(data) {
+      res.status(200).send(data)
+    },
+    function(error) {
+      console.error(error);
+      res.status(400).send(error)
     }
-    transporter.close();
-  });
+  );
+
 });
 
 export default router;

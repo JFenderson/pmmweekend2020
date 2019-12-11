@@ -1,12 +1,12 @@
 // import _ from "lodash";
 import message from "./message";
-// import "./materialize.min.js";
 import "../styles/styles.scss";
 import firebaseFunct from "./firebase";
+import {stripeMethod} from './stripe';
+// import stripeMethod from './stripe';
 import $ from "jquery";
 import M from "materialize-css";
-import lozad from "lozad";
-import lightGallery from "lightgallery";
+
 
 $(document).ready(() => {
   $(".pageloader")
@@ -53,22 +53,116 @@ $(document).ready(() => {
     });
   //end navbar
 
-  //get selected item from options and change button based on selection
-  $("#event-select").change(function() {
-    // Hide all the buttons by default
-    $(".snipcart-add-item").hide();
+  //START IMAGE GALLERY
+  firebaseFunct();
 
-    var s = $('.snipcart-add-item[data-item-id="' + $(this).val() + '"]');
-    s.show();
+
+  //END PHOTO GALLERY
+
+  //NODEMAILER FOR CONTACT FORM
+  function phoneFormatter() {
+    $("#number").on("input", function() {
+      let number = $(this)
+        .val()
+        .replace(/[^\d]/g, "");
+      if (number.length == 7) {
+        number = number.replace(/(\d{3})(\d{4})/, "$1-$2");
+      } else if (number.length == 10) {
+        number = number.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
+      }
+      $(this).val(number);
+    });
+  }
+
+  $(phoneFormatter);
+
+  // $.getScript("./stripe.js", () => {
+  //   console.log('got the stripe file');
+  // });
+
+
+  //stripe starter
+  stripeMethod();
+  //stripe ends
+
+  //MEMBER SIGNUP TO ADD TO BE ADDED TO DATABASE
+  $("#memberSubmit").click(e => {
+    e.preventDefault();
+
+    let name = $("#memberName").val();
+    let email = $("#memberEmail").val();
+    let number = $("#memberNumber").val();
+    let location = $("#memberLocation").val();
+    let confirm = $("#memberConfirm").val();
+
+    let yes = "yes";
+    let no = "no";
+
+    if($("#memberConfirm").val().toLowerCase() === yes.toLowerCase()){
+      confirm = 'yes';
+    }else if ($("#memberConfirm").val().toLowerCase() === no.toLowerCase()) {
+      confirm = "no";
+    }else{
+      confirm = 'N/A';
+    }
+
+
+    fetch("http://localhost:5000/api/members/signup", {
+      method: "POST", // or 'PUT'
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        phoneNumber: number,
+        location: location,
+        confirm: confirm
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => {
+        res.json();
+        setTimeout(() => {
+          window.location.reload();
+        }, 10);
+      })
+      .catch(error => {
+        return Error("Error:", error);
+      });
   });
+  //END MEMBER SIGNUP
 
-  (async () => {
-    var button = $("#submit-button");
-    var buttonPhoto = $(".photos");
+  //start contact
+  $("#contactSubmit").click(e => {
+    e.preventDefault();
 
-    firebaseFunct();
-    $("#lightgallery").lightGallery();
-  })();
+    let name = $("#contactName").val();
+    let email = $("#contactEmail").val();
+
+
+    fetch("http://localhost:5000/api/contact/signup", {
+      method: "POST", // or 'PUT'
+      body: JSON.stringify({
+        name: name,
+        email: email,
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => {
+        res.json();
+        setTimeout(() => {
+          window.location.reload();
+        }, 10);
+      })
+      .catch(error => {
+        return Error("Error:", error);
+      });
+  });
+  //end contact
+
+  // (async () => {})();
 
   // COUNTDOWN
 
@@ -100,9 +194,9 @@ $(document).ready(() => {
   });
 
   /* --------------------------
-   * FIGURE OUT THE AMOUNT OF 
-     TIME LEFT BEFORE LAUNCH
-   * -------------------------- */
+* FIGURE OUT THE AMOUNT OF 
+TIME LEFT BEFORE LAUNCH
+* -------------------------- */
   function timeToLaunch() {
     // Get the current date
     let currentDate = new Date();
@@ -125,9 +219,9 @@ $(document).ready(() => {
   }
 
   /* --------------------------
-   * DISPLAY THE CURRENT 
-     COUNT TO LAUNCH
-   * -------------------------- */
+* DISPLAY THE CURRENT 
+COUNT TO LAUNCH
+* -------------------------- */
   function countDownTimer() {
     // Figure out the time to launch
     timeToLaunch();
@@ -143,9 +237,9 @@ $(document).ready(() => {
   }
 
   /* --------------------------
-   * TRANSITION NUMBERS FROM 0
-     TO CURRENT TIME UNTIL LAUNCH
-   * -------------------------- */
+* TRANSITION NUMBERS FROM 0
+TO CURRENT TIME UNTIL LAUNCH
+* -------------------------- */
   function numberTransition(id) {
     // Transition numbers from 0 to the final number
     $({ numberCount: $(id).text() });

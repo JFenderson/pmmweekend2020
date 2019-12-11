@@ -295,23 +295,23 @@ ul#countdown li {
     font-size: 2.2em;
   }
 }
-.title-page > .col:nth-child(2){
+.title-page > .col:nth-child(2) {
   margin-right: 15%;
 }
 .title-content {
   padding-top: 10em;
   width: 100%;
 }
-.btn-col{
+.btn-col {
   width: 100%;
 }
-.event-btn{
+.event-btn {
   background-color: $primaryColor;
   margin-bottom: 8em;
 }
 /* end landing title */
 //about
-#about{
+#about {
   width: 95%;
 }
 .about {
@@ -319,10 +319,10 @@ ul#countdown li {
   color: $fontColor;
   border-radius: 10px;
 }
-.about>h3{
+.about > h3 {
   font-size: 2.5rem;
 }
-.about>p{
+.about > p {
   font-size: 17px;
 }
 //end about
@@ -349,11 +349,11 @@ ul#countdown li {
 //end dirty 30
 //schedule
 .card .card-content {
-    padding: 2px;
-    border-radius: 0 0 2px 2px;
-    text-align: center;
-    width: 98%;
-    border-radius: 5px;
+  padding: 2px;
+  border-radius: 0 0 2px 2px;
+  text-align: center;
+  width: 98%;
+  border-radius: 5px;
 }
 .card-content > h3 {
   font-size: 2em;
@@ -390,36 +390,40 @@ ul#countdown li {
 .tabs .indicator {
   background-color: $secondaryColor;
 } /*Color of underline*/
-.tabs .tab a:focus, .tabs .tab a:focus.active {
-    background-color: rgba(82,40,136, 0.4);
-    outline: none;
-}/*Color of focus*/
+.tabs .tab a:focus,
+.tabs .tab a:focus.active {
+  background-color: rgba(82, 40, 136, 0.4);
+  outline: none;
+} /*Color of focus*/
 //end schdule
 //start dirty 30
 
 //end dirty 30
 //start registration
-.pricing > div > h4 {
+.pricing > h4 {
   text-align: center;
 }
-.pricing-col{
+.pricing-col {
   width: 100%;
   text-align: center;
 }
-.pricing-card{
+.pricing-card {
   height: auto;
 }
 .pricing-card > p {
   margin: 0px;
 }
-.pricing-card > p:nth-child(1){
+.pricing-card > p:nth-child(1) {
   font-weight: 600;
   font-size: 2.3rem;
 }
-.pricing-card > p:nth-child(2){
+.pricing-card > p:nth-child(2) {
   font-size: 1.2rem;
 }
-.pricing-card > h3{
+.pricing-card > p:nth-child(3) {
+  font-size: 1.2rem;
+}
+.pricing-card > h3 {
   font-weight: 500;
   font-size: 2.5rem;
 }
@@ -429,7 +433,7 @@ ul#countdown li {
 .pricing-card > li {
   line-height: 1em;
 }
-.pricing-btn{
+.pricing-btn {
   background-color: $primaryColor;
   color: $secondaryColor;
   border-radius: 15px;
@@ -439,38 +443,48 @@ ul#countdown li {
   color: $primaryColor;
 } /*Text color on hover*/
 .select-wrapper input.select-dropdown:focus {
-    border-bottom: 1px solid $primaryColor;
+  border-bottom: 1px solid $primaryColor;
 }
-.dropdown-content li>span>label {
+.bundle > div.select-wrapper {
+  display: none;
+}
+.dropdown-content li > span > label {
   color: $primaryColor;
 }
-[type="checkbox"]:checked+span:not(.lever):before {
-    border-right: 2px solid $primaryColor;
-    border-bottom: 2px solid $primaryColor;
+.dropdown-content li > span {
+  font-size: 16px;
+  color: $primaryColor;
+  display: block;
+  line-height: 22px;
+  padding: 14px 16px;
 }
-.hotel-info{
+[type="checkbox"]:checked + span:not(.lever):before {
+  border-right: 2px solid $primaryColor;
+  border-bottom: 2px solid $primaryColor;
+}
+.hotel-info {
   text-align: center;
   width: 100%;
 }
 .hotel-info .card-panel > p {
   font-size: 20px;
 }
-.activity-info > h4{
+.activity-info > h4 {
   text-align: center;
 }
 .activity-info > p {
   font-size: 1.4em;
   text-align: center;
 }
-.collection a.collection-item{
+.collection a.collection-item {
   color: $primaryColor;
   font-size: 1.7rem;
 }
-.activity-info .collection .collection-item:hover{
+.activity-info .collection .collection-item:hover {
   background-color: $primaryColor;
   color: $fontColor;
 }
-.activity-info .collection a.collection-item:active{
+.activity-info .collection a.collection-item:active {
   background-color: $primaryColor;
   color: $fontColor;
 }
@@ -481,97 +495,229 @@ ul#countdown li {
   font-size: 1.4em;
   text-align: center;
 }
-.payment li.collection-item{
+.payment li.collection-item {
   font-size: 1.5em;
 }
 //end registration
-//start PMM WEEKEND 2019
+//member signup
+/* start member */
+.band-member-area {
+  color: $fontColor;
+  margin: 2em 0;
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url("../assets/45417458_1347624525373503_7790309757063004160_n.jpg");
+  background-color: rgba(66, 14, 66, 0.699);
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  background-position: center center;
+  -webkit-background-size: cover !important;
+  -moz-background-size: cover !important;
+  -o-background-size: cover !important;
+  image-rendering: optimizeQuality;
+  height: auto;
+  background-attachment: fixed;
+  overflow: hidden;
+}
+.title-member {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 30px;
+}
+.member-left {
+  padding: 15px;
+  text-align: center;
+}
+.member-left p {
+  font-size: 1.7em;
+  text-align: center;
+}
+.member-form {
+  display: grid;
+}
 
+.member-form input {
+  font-size: 0.875em;
+  /* width: 470px; */
+  width: 100%;
+  height: 50px;
+  border: solid 1px #cebd39;
+  /* border-bottom: none; */
+  padding: 0px 15px 0px 15px;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  margin-bottom: 15px;
+  color: $fontColor;
+}
+
+#memberSubmit {
+  text-align: center;
+  margin: -5px 0px 0px 0px;
+  border-bottom: solid 1px #cebd39;
+  font-size: 1em;
+  transition: all 0.3s ease-in-out;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  width: 50%;
+  margin: 0 auto;
+}
+#memberSubmit:hover {
+  cursor: pointer;
+  background-color: rgb(66, 14, 66);
+  color: white;
+}
+
+.memberSubmit:before {
+  content: "";
+  position: absolute(0, 0, 0, 0);
+  background-color: shade(random-color(), 40%);
+  transform: translateX(-100%);
+}
+.btn-0:hover {
+  color: tint(random-color(), 75%);
+}
+.btn-0:hover:before {
+  transform: translateX(0);
+}
+
+.member-form input:focus {
+  border: solid 1px transparent;
+  -webkit-box-shadow: 0px 0px 13px 2px $secondaryColor;
+  -moz-box-shadow: 0px 0px 13px 2px $secondaryColor;
+  box-shadow: 0px 0px 13px 2px $secondaryColor;
+  /* padding: 3px 0px 3px 3px;
+    margin: 5px 1px 3px 0px; */
+}
+
+.memberBtn {
+  background-color: $primaryColor;
+  color: $secondaryColor;
+  border-radius: 15px;
+}
+.memberBtn:hover {
+  background-color: #eee;
+  color: $primaryColor;
+} /*Text color on hover*/
+input:not([type]):focus:not([readonly]),
+input[type="text"]:not(.browser-default):focus:not([readonly]),
+input[type="password"]:not(.browser-default):focus:not([readonly]),
+input[type="email"]:not(.browser-default):focus:not([readonly]),
+input[type="url"]:not(.browser-default):focus:not([readonly]),
+input[type="time"]:not(.browser-default):focus:not([readonly]),
+input[type="date"]:not(.browser-default):focus:not([readonly]),
+input[type="datetime"]:not(.browser-default):focus:not([readonly]),
+input[type="datetime-local"]:not(.browser-default):focus:not([readonly]),
+input[type="tel"]:not(.browser-default):focus:not([readonly]),
+input[type="number"]:not(.browser-default):focus:not([readonly]),
+input[type="search"]:not(.browser-default):focus:not([readonly]),
+textarea.materialize-textarea:focus:not([readonly]) {
+  border-bottom: 1px solid $secondaryColor;
+  -webkit-box-shadow: 0 1px 0 0 $secondaryColor;
+  box-shadow: 0 1px 0 0 $secondaryColor;
+}
+
+/* end member */
+//end member signup
+
+//start PMM WEEKEND 2019
+/* starts photo gallery/slideshow */
+/* photo gallery will not show on mobile devices..only tablets and desktop */
+.photo-gallery-area {
+  height: auto;
+  display: none;
+}
+
+
+
+/* end photo gallery */
 // end PMM WEEKEND 2019
 
 // start contact
-  #contact{
-    background-color: $primaryColor;
-    color: $fontColor;
-  }
-  .contact-box{
-    color: $fontColor;
-    width: 100%;
-    text-align: center;
-  }
-  .contact-box > ul {
-    padding: 2em;
-  }
-  .contact-box > ul > li{
-    font-size: 1.4em;
-  }
-  .contact-box > ul > li > i{
-    font-size: 1.5em;
-    color: $secondaryColor;
-  }
-  .contact-box > ul > li > p{
-    font-size: 0.8em;
-    line-height: 10px;
-  }
-  .newsletter-container{
-    height: auto;
-    text-align: center;
-    width: 100%;
-    background-color: white;
-    color: black;
-  }
-  .newsletter-container > p{
-    font-size: 1.6em;
-  }
-  .newsletter-container > form{
-    margin: 2em;
-  }
-  .newsletter-container > form > .row > .col{
-    width: 100%;
-  }
-  .newsletter-container > form > .row > .col > .btn {
-    background-color: $primaryColor;
-    color: $fontColor;
-  }
-  .input-field > input:focus{
-    border-bottom: 1px solid $secondaryColor;
-    -webkit-box-shadow: 0 1px 0 0 $secondaryColor;
-    box-shadow: 0 1px 0 0 $secondaryColor;
-  }
-  .contact-container{
-    width: 100%;
-    text-align: center;
-  }
-  .contact-container > h3{
-    font-size: 1.6em;
-  }
-  .social-footer {
-    display: inline-flex;
-  }
-  .social-footer > li{
-    font-size: 2em;
-    margin-right: 1em;
-  }
-  .social-footer > li > a{
-    color: $fontColor;
-  }
-  .social-footer > li > a:hover{
-    color: $secondaryColor;
-  }
-  .devLink{
-    color: $fontColor;
-  }
-  .devLink{
-    color: $fontColor;
-  }
-  .devLink a:hover{
-    color: $secondaryColor;
-  }
-  .useful-links > li > p > a{
-    color: $fontColor;
-  }
-  .useful-links > li > p > a:hover{
-    color: $secondaryColor;
-  }
+#contact {
+  background-color: $primaryColor;
+  color: $fontColor;
+}
+.contact-box {
+  color: $fontColor;
+  width: 100%;
+  text-align: center;
+}
+.contact-box > ul {
+  padding: 2em;
+}
+.contact-box > ul > li {
+  font-size: 1.4em;
+}
+.contact-box > ul > li > i {
+  font-size: 1.5em;
+  color: $secondaryColor;
+}
+.contact-box > ul > li > p {
+  font-size: 0.8em;
+  line-height: 10px;
+}
+.newsletter-container {
+  height: auto;
+  text-align: center;
+  width: 100%;
+  background-color: white;
+  color: black;
+}
+.newsletter-container > p {
+  font-size: 1.6em;
+}
+.newsletter-container > form {
+  margin: 2em;
+}
+.newsletter-container > form > .row > .col {
+  width: 100%;
+}
+.newsletter-container > form > .row > .col > .btn {
+  background-color: $primaryColor;
+  color: $fontColor;
+}
+.input-field > input:focus {
+  border-bottom: 1px solid $secondaryColor;
+  -webkit-box-shadow: 0 1px 0 0 $secondaryColor;
+  box-shadow: 0 1px 0 0 $secondaryColor;
+}
+.contact-container {
+  width: 100%;
+  text-align: center;
+}
+.contact-container > h3 {
+  font-size: 1.6em;
+}
+.social-footer {
+  display: inline-flex;
+}
+.social-footer > li {
+  font-size: 2em;
+  margin-right: 1em;
+}
+.social-footer > li > a {
+  color: $fontColor;
+}
+.social-footer > li > a:hover {
+  color: $secondaryColor;
+}
+.devLink {
+  color: $fontColor;
+}
+.devLink {
+  color: $fontColor;
+}
+.devLink a:hover {
+  color: $secondaryColor;
+}
+.useful-links > li > p > a {
+  color: $fontColor;
+}
+.useful-links > li > p > a:hover {
+  color: $secondaryColor;
+}
 
 // end contact

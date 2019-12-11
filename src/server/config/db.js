@@ -17,9 +17,9 @@ function executeQuery(sql, args = []) {
       connection.query(sql, args, (err, result) => {
         connection.release();
         if (err) {
-          reject(err);
+          return reject(err);
         } else {
-          resolve(result);
+          return resolve(result);
         }
       });
     });
@@ -69,9 +69,9 @@ function getConnection() {
   return new Promise((resolve, reject) => {
     pool.getConnection((err, connection) => {
       if (err) {
-        reject(err);
+        return reject(err);
       } else {
-        resolve(connection);
+        return resolve(connection);
       }
     });
   });
