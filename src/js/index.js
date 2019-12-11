@@ -6,6 +6,7 @@ import {stripeMethod} from './stripe';
 // import stripeMethod from './stripe';
 import $ from "jquery";
 import M from "materialize-css";
+import '@babel/polyfill'
 
 
 $(document).ready(() => {

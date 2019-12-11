@@ -8,7 +8,7 @@
   text-align: center;
   color: $secondaryColor;
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url("../assets/middle_of_field_M.jpg");
+    url("~../assets/middle_of_field_M.jpg");
   background-color: rgba(66, 14, 66, 0.699);
   background-repeat: no-repeat;
   background-size: auto 100%;
@@ -368,7 +368,7 @@ ul#countdown li {
   color: $secondaryColor;
 }
 .card-container > div > ul > li > p {
-  font-size: 1.7em;
+  font-size: 1.3em;
 }
 .tabs {
   border-radius: 5px;

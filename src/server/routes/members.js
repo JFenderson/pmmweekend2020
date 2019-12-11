@@ -4,7 +4,6 @@ import ZipCodes from "zipcodes";
 import human from "humanparser";
 import dotenv from "dotenv";
 import SibApiV3Sdk from "sib-api-v3-sdk";
-// import { transporter} from '../config/nodemailer';
 dotenv.config();
 
 let router = Router();
