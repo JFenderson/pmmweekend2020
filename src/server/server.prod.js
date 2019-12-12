@@ -75,7 +75,7 @@ app.use('*', function (req, res) {
 	res.sendStatus(404).sendFile(errorPg);
 });
 
-app.listen(config.port, err => {
+app.listen(config.port, "localhost", err => {
   if (err) {
     return console.log("error", err);
   }
