@@ -1,3 +1,0 @@
-Digital Ocean was used to make the droplet server to hold the site
-167.172.226.138
-user pmmadmin - pmm1x
