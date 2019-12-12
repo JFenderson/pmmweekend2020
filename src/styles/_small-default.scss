@@ -4,7 +4,7 @@
 .wrapper {
   overflow: hidden;
 }
-.landing {
+.landing{
   text-align: center;
   color: $secondaryColor;
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
@@ -14,6 +14,9 @@
   background-size: auto 100%;
   font-family: "Quicksand", sans-serif;
   background-position: center center;
+  -webkit-background-size: 100%; 
+  -moz-background-size: 100%; 
+  -o-background-size: 100%; 
   -webkit-background-size: cover !important;
   -moz-background-size: cover !important;
   -o-background-size: cover !important;
