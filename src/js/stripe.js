@@ -35,7 +35,7 @@ toValidate.keyup(function() {
   }
 });
 
-const stripe = "pk_test_obzu76S8L0GFvqkXbKn204a2";
+const stripe = "sk_live_tGkXtn4JUxMJW1BHM0Z3awhL";
 export function stripeMethod() {
   let handler = StripeCheckout.configure({
     // eslint-disable-line no-undef
