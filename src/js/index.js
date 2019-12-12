@@ -108,7 +108,7 @@ $(document).ready(() => {
     }
 
 
-    fetch("http://localhost:5000/api/members/signup", {
+    fetch("https://167.172.226.138:5000/api/members/signup", {
       method: "POST", // or 'PUT'
       body: JSON.stringify({
         name: name,
@@ -141,7 +141,7 @@ $(document).ready(() => {
     let email = $("#contactEmail").val();
 
 
-    fetch("http://localhost:5000/api/contact/signup", {
+    fetch("https://167.172.226.138:5000/api/contact/signup", {
       method: "POST", // or 'PUT'
       body: JSON.stringify({
         name: name,
