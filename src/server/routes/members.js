@@ -16,7 +16,8 @@ let partnerKey = defaultClient.authentications["partner-key"];
 partnerKey.apiKey = process.env.SEND_IN_BLUE_V2;
 
 router.get("/", (req, res) => {
-  return members.getAll()
+  return members
+    .getAll()
     .then(member => {
       return res.status(200).send(member);
     })
@@ -30,7 +31,7 @@ router.get("/:id", (req, res) => {
   return members
     .getOne(id)
     .then(member => {
-      return res.status(200).send({member});
+      return res.status(200).send({ member });
     })
     .catch(err => {
       return res.status(400).send(err);
@@ -42,7 +43,7 @@ router.delete("/:id", (req, res) => {
   return members
     .delete(id)
     .then(member => {
-      return res.status(200).send({member});
+      return res.status(200).send({ member });
     })
     .catch(err => {
       return res.status(400).send(err);
@@ -89,13 +90,19 @@ router.post("/signup", (req, res) => {
     confirm: confirm
   };
 
-  return members.findOne(data.firstName,data.lastName)
-    .then(member => {
-      let members = JSON.stringify(member);
-      let json = JSON.parse(members);
-      if(data.firstName == json.first_name && data.lastName == json.last_name){
-        console.log('MEMBER EXISTS');
-        res.end();
+  let membersJSON = JSON.stringify(data);
+
+  let json = JSON.parse(membersJSON);
+
+  members.findOne(json.firstName, json.lastName)
+  .then(member => {
+      let memberParse = JSON.stringify(member)
+      let memberJSON = JSON.parse(memberParse)
+      if (
+        (data.firstName == memberJSON.first_name) &&
+        (data.lastName == memberJSON.last_name)
+      ) {
+        res.status(400).send('member exists');
       }else{
         members.insert({
             first_name: data.firstName,
@@ -107,54 +114,57 @@ router.post("/signup", (req, res) => {
             marched: data.confirm
           })
           .then(member => {
-            createContact = {
-              email: email,
-              attributes: {
-                FNAME: data.firstName,
-                LNAME: data.lastName,
-                PHONE: data.phoneNumber
-              }
-            };
-      
-            apiInstance.createContact(createContact)
-              .then(data => {
-                res.status(200).send(data);
-              })
-              .catch(err => {
-                res.status(400).send(err);
-              });
-              
-      
-            apiInstance.addContactToList(contactEmails)
-              .then(data => {
-                res.status(200).send(data);
-              })
-              .catch(err => {
-                res.status(400).send(err);
-              });
-      
-            SMTPapiInstance.sendTransacEmail(sendSmtpEmail)
-              .then(data => {
-                res.status(200).send(data);
-              })
-              .catch(err => {
-                res.status(400).send(err);
-              });
-      
-            return res.status(200).send({ member });
+            return res.status(201).send({ member });
           })
           .catch(err => {
-            return res.status(400).send(err, 400);
+            console.log('at the insert', err);
+            return res.status(400).send(err);
           });
       }
     })
     .catch(err => {
-      console.log(err)
-      return res.status(400).send(err);
+      console.log('at the find',err);
+      res.status(400).send(err);
+    });
+    
+    createContact = {
+        email: email,
+    attributes: {
+      FNAME: data.firstName,
+      LNAME: data.lastName,
+      PHONE: data.phoneNumber
+    }
+  };
+
+  apiInstance.createContact(createContact)
+    .then(data => {
+      return data;
+      // res.status(200).send(data);
+    })
+    .catch(err => {
+      new Error(err)
+      // res.status(400).send(err);
     });
 
+  apiInstance.addContactToList(5,contactEmails)
+    .then(data => {
+      return data;
+      // res.status(200).send(data);
+    })
+    .catch(err => {
+      new Error(err)
+      // res.status(400).send(err);
+    });
 
-
+  SMTPapiInstance.sendTransacEmail(sendSmtpEmail)
+    .then(data => {
+      return data;
+      // res.status(200).send(data);
+    })
+    .catch(err => {
+      new Error(err)
+      // res.status(400).send(err);
+    });
 });
 
 export default router;

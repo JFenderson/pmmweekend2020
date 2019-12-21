@@ -49,7 +49,7 @@ app.use(express.json());
 app.set("trust proxy", true);
 app.set("trust proxy", "loopback");
 app.use(cors());
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname + "../../dist")));
 app.use("/api", routes);
 
@@ -75,7 +75,7 @@ app.use('*', function (req, res) {
 	res.sendStatus(404).sendFile(errorPg);
 });
 
-app.listen(config.port, "localhost", err => {
+app.listen(config.port, err => {
   if (err) {
     return console.log("error", err);
   }

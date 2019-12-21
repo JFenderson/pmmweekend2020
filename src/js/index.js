@@ -118,17 +118,19 @@ $(document).ready(() => {
         confirm: confirm
       }),
       headers: {
-        "Content-Type": "application/json"
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=utf-8'"
       }
     })
       .then(res => {
+        console.log(res);
         res.json();
-        setTimeout(() => {
-          window.location.reload();
-        }, 10);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 10);
       })
       .catch(error => {
-        console.log(error)
+        console.log(error);
         return Error("Error:", error);
       });
   });
@@ -153,10 +155,10 @@ $(document).ready(() => {
       }
     })
       .then(res => {
-        res.json();
-        setTimeout(() => {
-          window.location.reload();
-        }, 10);
+        res.send(200).json();
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 10);
       })
       .catch(error => {
         return Error("Error:", error);

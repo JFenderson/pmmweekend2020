@@ -31,9 +31,9 @@ class Table {
   findOne(fname, lname) {
     let sql = `SELECT first_name, last_name FROM ${this.tableName} WHERE first_name = "${fname}" && last_name = "${lname}"`
       return executeQuery(sql, [fname,lname])
-      .then(results => results[0])
+      .then(result => result[0])
       .catch(err => {
-        console.log(err);
+        console.log(err)
       });
     
   }
