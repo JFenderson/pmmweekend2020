@@ -23,7 +23,8 @@ let app = express(),
   privatePolicy = path.join(DIST_DIR, "../dist/legal/privatePolicy.html"),
   cookiesPolicy = path.join(DIST_DIR, "../dist/legal/cookiesPolicy.html"),
   term = path.join(DIST_DIR, "../dist/legal/term.html"),
-  returnPolicy = path.join(DIST_DIR, "../dist/legal/return.html");
+  returnPolicy = path.join(DIST_DIR, "../dist/legal/return.html"),
+  hostname = "167.172.226.138";
 
 if (process.env.NODE_ENV !== "production") {
 	console.log("Looks like we are in development mode!");
