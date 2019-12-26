@@ -186,7 +186,7 @@ let ticketHandler = (token, args) => {
     args
   };
 
-  fetch("https://pmmweekend.com/api/charge/tickets/pmmticketpayment", {
+  fetch("https://pmmweekend.com/charge/tickets/pmmticketpayment", {
     method: "POST",
     mode: "cors", // no-cors, *cors, same-origin
     cache: "no-cache",

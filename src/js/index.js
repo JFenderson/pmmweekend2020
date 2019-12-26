@@ -108,7 +108,7 @@ $(document).ready(() => {
     }
 
 
-    fetch("http://localhost:8080/api/members/signup", {
+    fetch("https://pmmweekend.com/members/signup", {
       method: "POST", // or 'PUT'
       body: JSON.stringify({
         name: name,
@@ -144,7 +144,7 @@ $(document).ready(() => {
     let email = $("#contactEmail").val();
 
 
-    fetch("http://localhost:8080/api/contact/signup", {
+    fetch("https://pmmweekend.com/contact/signup", {
       method: "POST", // or 'PUT'
       body: JSON.stringify({
         name: name,
