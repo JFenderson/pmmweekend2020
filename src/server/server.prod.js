@@ -10,7 +10,8 @@ import webpack from "webpack";
 import cors from 'cors';
 import dotenv from "dotenv";
 import http from 'http';
-// import https from 'http2';
+import https from 'http2';
+import fs from 'fs';
 
 dotenv.config();
 
@@ -28,10 +29,6 @@ let app = express(),
   returnPolicy = path.join(DIST_DIR, "../dist/legal/return.html"),
   hostname = "167.172.226.138";
 
-let corsOptions = {
-  origin: "http://pmmweekend.com",
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
 
 if (process.env.NODE_ENV !== "production") {
 	console.log("Looks like we are in development mode!");
@@ -54,6 +51,12 @@ app.set("trust proxy", true);
 app.set("trust proxy", "loopback");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname + "../../dist")));
+app.use((req, res, next) => {
+  if (!req.secure) {
+    return res.redirect(["https://", req.get("Host"), req.url].join(""));
+  }
+  next();
+});
 
 app.get("/", cors(), (_, res) => {
   res.sendFile(HTML_FILE);
@@ -78,10 +81,18 @@ app.get('/legal/return', (_,res) => {
   res.sendFile(returnPolicy)
 })
 
+http.get("*", function(req, res) {
+  res.redirect("https://pmmweekend.com" + req.url);
+
+  // Or, if you don't want to automatically detect the domain name from the request header, you can hard code it:
+  // res.redirect('https://example.com' + req.url);
+});
+
 //catch all endpoint will be Error Page
 app.use('*', function (req, res) {
 	res.sendStatus(404).sendFile(errorPg);
 });
+
 
 // app.listen(config.port, err => {
 //   if (err) {
@@ -90,10 +101,16 @@ app.use('*', function (req, res) {
 //   console.log(`server on port ${config.port}!`);
 // });
 
-http.createServer(app,(req, res) => {
-  res.writeHead(200);
-}).listen(8080, () => {
+// const options = {
+//   hostname: "pmmweekend.com",
+//   port: 443,
+//   key: fs.readFileSync('test/fixtures/keys/agent2-key.pem'),
+//   cert: fs.readFileSync('test/fixtures/keys/agent2-cert.pem')
+// };
+
+http.createServer(app).listen(8080, () => {
   console.log(`listening on 8080`);
 });
-// https.createServer(options, app).listen(433);
+
+// https.createServer(options, app).listen(433)
 
