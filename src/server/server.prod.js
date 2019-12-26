@@ -92,8 +92,8 @@ app.use('*', function (req, res) {
 
 http.createServer(app,(req, res) => {
   res.writeHead(200);
-}).listen(config.port, () => {
-  console.log(`listening on ${config.port}`);
+}).listen(8080, () => {
+  console.log(`listening on 8080`);
 });
 // https.createServer(options, app).listen(433);
 
