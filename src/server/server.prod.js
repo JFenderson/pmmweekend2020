@@ -66,14 +66,14 @@ app.set("trust proxy", true);
 app.set("trust proxy", "loopback");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname + "../../dist")));
-app.use((req, res, next) => {
-  if (!req.secure) {
-    return res.redirect(["https://", req.get("Host"), req.url].join(""));
-  }
-  next();
-});
+//app.use((req, res, next) => {
+//  if (!req.secure) {
+//    return res.redirect(["https://", req.get("Host"), req.url].join(""));
+//  }
+//  next();
+//});
 
-app.get("/", cors(), (_, res) => {
+app.get("/", (_, res) => {
   res.sendFile(HTML_FILE);
 });
 
@@ -82,7 +82,7 @@ app.get("/", cors(), (_, res) => {
 //routes
 
 
-app.get("/members/", (req, res) => {
+app.get("/members", (req, res) => {
   return members
     .getAll()
     .then(member => {
@@ -173,8 +173,7 @@ app.post("/members/signup", (req, res) => {
   //     }else{
   //     }
   //   })
-  members
-    .insert({
+  members.insert({
       first_name: data.firstName,
       last_name: data.lastName,
       email: data.email,
@@ -385,9 +384,9 @@ app.get('/legal/return', (_,res) => {
 })
 
 //catch all endpoint will be Error Page
-app.use('*', function (req, res) {
-	res.sendStatus(404).sendFile(errorPg);
-});
+//app.use('*', function (req, res) {
+//	res.sendStatus(404).sendFile(errorPg);
+//});
 
 
 // app.listen(config.port, err => {
@@ -404,7 +403,7 @@ app.use('*', function (req, res) {
 //   cert: fs.readFileSync('test/fixtures/keys/agent2-cert.pem')
 // };
 
-http.createServer(app).listen(8080, () => {
+http.createServer(app).listen(8080,'127.0.0.1', () => {
   console.log(`listening on 8080`);
 });
 
