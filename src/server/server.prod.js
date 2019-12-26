@@ -22,17 +22,6 @@ dotenv.config();
 
 const webPackConfig = require("../../webpack.config.prod.js");
 const compiler = webpack(webPackConfig);
-let members = new Table("members");
-let defaultClient = SibApiV3Sdk.ApiClient.instance;
-let apiKey = defaultClient.authentications["api-key"];
-apiKey.apiKey = process.env.SEND_IN_BLUE_V3;
-// Configure API key authorization: partner-key
-let partnerKey = defaultClient.authentications["partner-key"];
-partnerKey.apiKey = process.env.SEND_IN_BLUE_V2;
-var apiInstance = new SibApiV3Sdk.SMTPApi();
-var sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail(); // SendSmtpEmail | Values to send a transactional email
-let events = new Table("events");
-const stripe = stripeLoader(process.env.STRIPE_TEST_SECRETKEY);
 
 let app = express(),
   DIST_DIR = __dirname,
@@ -42,8 +31,19 @@ let app = express(),
   privatePolicy = path.join(DIST_DIR, "../dist/legal/privatePolicy.html"),
   cookiesPolicy = path.join(DIST_DIR, "../dist/legal/cookiesPolicy.html"),
   term = path.join(DIST_DIR, "../dist/legal/term.html"),
-  returnPolicy = path.join(DIST_DIR, "../dist/legal/return.html");
+  returnPolicy = path.join(DIST_DIR, "../dist/legal/return.html"),
+  members = new Table("members"),
+  events = new Table("events"),
+  defaultClient = SibApiV3Sdk.ApiClient.instance,
+  apiKey = defaultClient.authentications["api-key"],
+  partnerKey = defaultClient.authentications["partner-key"],
+  apiInstance = new SibApiV3Sdk.SMTPApi(),
+  sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail(),
+  stripe = stripeLoader(process.env.STRIPE_TEST_SECRETKEY);
 
+
+  apiKey.apiKey = process.env.SEND_IN_BLUE_V3;
+  partnerKey.apiKey = process.env.SEND_IN_BLUE_V2;
 
 if (process.env.NODE_ENV !== "production") {
 	console.log("Looks like we are in development mode!");
@@ -82,7 +82,7 @@ app.get("/", cors(), (_, res) => {
 //routes
 
 
-app.get("/", (req, res) => {
+app.get("/members/", (req, res) => {
   return members
     .getAll()
     .then(member => {
@@ -93,7 +93,7 @@ app.get("/", (req, res) => {
     });
 });
 
-app.get("/:id", (req, res) => {
+app.get("/members/:id", (req, res) => {
   let id = req.params.id;
   return members
     .getOne(id)
@@ -105,7 +105,7 @@ app.get("/:id", (req, res) => {
     });
 });
 
-app.delete("/:id", (req, res) => {
+app.delete("/members/:id", (req, res) => {
   let id = req.params.id;
   return members
     .delete(id)
@@ -117,7 +117,7 @@ app.delete("/:id", (req, res) => {
     });
 });
 
-app.post("/signup", (req, res) => {
+app.post("/members/signup", (req, res) => {
   let { email, phoneNumber, confirm } = req.body;
   let name = human.parseName(req.body.name);
   let location = ZipCodes.lookup(req.body.location);
@@ -237,11 +237,11 @@ app.post("/signup", (req, res) => {
     });
 });
 
-app.get("/", (req, res) => {
+app.get("/contact", (req, res) => {
   res.send('Server working. Please post at "/contact" to submit a message.');
 });
 
-app.post("/signup", (req, res) => {
+app.post("/contact/signup", (req, res) => {
   const name = req.body.name;
   const email = req.body.email;
 
