@@ -42,6 +42,8 @@ let firebaseFunct = () => {
           showSlides();
 
           function showSlides() {
+            // let rand = randomImg[Math.floor(Math.random() * randomImg.length)];
+            // console.log(rand);
             var i;
             var slides = document.getElementsByClassName("mySlides");
             for (i = 0; i < slides.length; i++) {

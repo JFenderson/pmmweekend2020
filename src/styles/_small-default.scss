@@ -694,6 +694,9 @@ textarea.materialize-textarea:focus:not([readonly]) {
 .contact-container > h3 {
   font-size: 1.6em;
 }
+.contact-box > ul > li:nth-child(3) > p > a {
+  color: white;
+}
 .social-footer {
   display: inline-flex;
 }
