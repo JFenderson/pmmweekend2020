@@ -123,11 +123,10 @@ $(document).ready(() => {
       }
     })
       .then(res => {
-        console.log(res);
         res.json();
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 10);
+        setTimeout(() => {
+          window.location.reload();
+        }, 10);
       })
       .catch(error => {
         console.log(error);
@@ -156,9 +155,9 @@ $(document).ready(() => {
     })
       .then(res => {
         res.send(200).json();
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 10);
+        setTimeout(() => {
+          window.location.reload();
+        }, 10);
       })
       .catch(error => {
         return Error("Error:", error);

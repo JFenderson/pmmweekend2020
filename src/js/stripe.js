@@ -78,11 +78,11 @@ export function stripeMethod() {
     let tixQuanity = $("#numberOfTickets").val();
     let tixType = $("#purchase").val();
 
-    console.log(
-      $("#purchase")
-        .find("option:selected")
-        .attr("name")
-    );
+    // console.log(
+    //   $("#purchase")
+    //     .find("option:selected")
+    //     .attr("name")
+    // );
 
     if (tixType == "pmmkaraoke") {
       handler.open({

@@ -2,15 +2,15 @@ import path from "path";
 import express from "express";
 import morgan from "morgan";
 import bodyParser from "body-parser";
-import config from "./config/config";
+// import config from "./config/config";
 import "@babel/polyfill";
 import webpackHotMiddleware from "webpack-hot-middleware";
 import webpack from "webpack";
 import cors from 'cors';
 import dotenv from "dotenv";
 import http from 'http';
-import https from 'http2';
-import fs from 'fs';
+// import https from 'http2';
+// import fs from 'fs';
 import Table from "./util/dbTable.init";
 import ZipCodes from "zipcodes";
 import human from "humanparser";
@@ -384,9 +384,9 @@ app.get('/legal/return', (_,res) => {
 })
 
 //catch all endpoint will be Error Page
-//app.use('*', function (req, res) {
-//	res.sendStatus(404).sendFile(errorPg);
-//});
+app.use('*', function (req, res) {
+	res.sendStatus(404).sendFile(errorPg);
+});
 
 
 // app.listen(config.port, err => {
