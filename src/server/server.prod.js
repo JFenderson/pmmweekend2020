@@ -9,6 +9,8 @@ import webpackHotMiddleware from "webpack-hot-middleware";
 import webpack from "webpack";
 import cors from 'cors';
 import dotenv from "dotenv";
+import http from 'http';
+// import https from 'http2';
 
 dotenv.config();
 
@@ -26,6 +28,11 @@ let app = express(),
   returnPolicy = path.join(DIST_DIR, "../dist/legal/return.html"),
   hostname = "167.172.226.138";
 
+let corsOptions = {
+  origin: "http://pmmweekend.com",
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
 if (process.env.NODE_ENV !== "production") {
 	console.log("Looks like we are in development mode!");
 }
@@ -39,19 +46,19 @@ app.use(
 );
 
 
-
-app.get("/", (_, res) => {
-  res.sendFile(HTML_FILE);
-});
-
+app.use(cors());
 app.use(morgan('combined'));
 app.use(bodyParser.json());
 app.use(express.json());
 app.set("trust proxy", true);
 app.set("trust proxy", "loopback");
-app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname + "../../dist")));
+
+app.get("/", cors(), (_, res) => {
+  res.sendFile(HTML_FILE);
+});
+
 app.use("/api", routes);
 
 // getting legal html files
@@ -76,9 +83,17 @@ app.use('*', function (req, res) {
 	res.sendStatus(404).sendFile(errorPg);
 });
 
-app.listen(config.port, err => {
-  if (err) {
-    return console.log("error", err);
-  }
-  console.log(`server on port ${config.port}!`);
+// app.listen(config.port, err => {
+//   if (err) {
+//     return console.log("error", err);
+//   }
+//   console.log(`server on port ${config.port}!`);
+// });
+
+http.createServer(app,(req, res) => {
+  res.writeHead(200);
+}).listen(config.port, () => {
+  console.log(`listening on ${config.port}`);
 });
+// https.createServer(options, app).listen(433);
+

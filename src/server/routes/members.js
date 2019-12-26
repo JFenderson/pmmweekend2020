@@ -90,42 +90,42 @@ router.post("/signup", (req, res) => {
     confirm: confirm
   };
 
-  let membersJSON = JSON.stringify(data);
+  // let membersJSON = JSON.stringify(data);
 
-  let json = JSON.parse(membersJSON);
+  // let json = JSON.parse(membersJSON);
 
-  members.findOne(json.firstName, json.lastName)
-  .then(member => {
-      let memberParse = JSON.stringify(member)
-      let memberJSON = JSON.parse(memberParse)
-      if (
-        (data.firstName == memberJSON.first_name) &&
-        (data.lastName == memberJSON.last_name)
-      ) {
-        res.status(400).send('member exists');
-      }else{
-        members.insert({
-            first_name: data.firstName,
-            last_name: data.lastName,
-            email: data.email,
-            phone_number: data.phoneNumber,
-            city: data.city,
-            state: data.state,
-            marched: data.confirm
-          })
-          .then(member => {
-            return res.status(201).send({ member });
-          })
-          .catch(err => {
-            console.log('at the insert', err);
-            return res.status(400).send(err);
-          });
-      }
+  // members.findOne(json.firstName, json.lastName)
+  // .then(member => {
+  //     let memberParse = JSON.stringify(member)
+  //     let memberJSON = JSON.parse(memberParse)
+  //     if (
+  //       (data.firstName == memberJSON.first_name) &&
+  //       (data.lastName == memberJSON.last_name)
+  //     ) {
+  //       res.status(400).send('member exists');
+  //     }else{
+  //     }
+  //   })
+  members.insert({
+      first_name: data.firstName,
+      last_name: data.lastName,
+      email: data.email,
+      phone_number: data.phoneNumber,
+      city: data.city,
+      state: data.state,
+      marched: data.confirm
+    })
+    .then(member => {
+      return res.status(201).send({ member });
     })
     .catch(err => {
-      console.log('at the find',err);
-      res.status(400).send(err);
+      console.log('at the insert', err);
+      return res.status(400).send(err);
     });
+    // .catch(err => {
+    //   console.log('at the find',err);
+    //   res.status(400).send(err);
+    // });
     
     createContact = {
         email: email,
