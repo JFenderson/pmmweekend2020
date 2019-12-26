@@ -81,12 +81,12 @@ app.get('/legal/return', (_,res) => {
   res.sendFile(returnPolicy)
 })
 
-http.get("*", function(req, res) {
-  res.redirect("https://pmmweekend.com" + req.url);
+//http.get("*", function(req, res) {
+//  res.redirect("https://pmmweekend.com" + req.url);
 
   // Or, if you don't want to automatically detect the domain name from the request header, you can hard code it:
   // res.redirect('https://example.com' + req.url);
-});
+//});
 
 //catch all endpoint will be Error Page
 app.use('*', function (req, res) {
